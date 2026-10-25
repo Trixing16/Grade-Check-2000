@@ -30,537 +30,209 @@
     flex-direction: column;
   }
 
-  /* ── Header ── */
   header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    z-index: 10;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; border-bottom: 1px solid var(--border);
+    background: var(--surface); z-index: 10; flex-shrink: 0; gap: 16px;
   }
-
   .logo {
     font-family: 'Avenir Next', 'Avenir', 'Nunito Sans', sans-serif;
-    font-weight: 700;
-    font-size: 1.2rem;
-    letter-spacing: 0.04em;
-    color: var(--accent);
+    font-weight: 700; font-size: 1.2rem; letter-spacing: 0.04em; color: var(--accent);
+    white-space: nowrap;
   }
   .logo span { color: var(--text); font-weight: 400; }
+  .meta { font-size: 0.65rem; color: var(--muted); text-align: right; line-height: 1.6; overflow: hidden; text-overflow: ellipsis; }
 
-  .meta {
-    font-size: 0.65rem;
-    color: var(--muted);
-    text-align: right;
-    line-height: 1.6;
-  }
-
-  /* ── Main area ── */
-  #main {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-  }
+  #main { flex: 1; position: relative; overflow: hidden; }
 
   /* ── Drop zone ── */
   #dropzone {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 5;
-    transition: opacity 0.4s;
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; z-index: 5; transition: opacity 0.4s; padding: 16px;
   }
-
   #dropzone.hidden { opacity: 0; pointer-events: none; }
-
   .drop-card {
-    border: 2px dashed var(--border);
-    border-radius: 4px;
-    padding: 60px 80px;
-    text-align: center;
-    background: var(--surface);
-    transition: border-color 0.2s, background 0.2s;
-    max-width: 480px;
+    border: 2px dashed var(--border); border-radius: 4px; padding: 56px 72px; text-align: center;
+    background: var(--surface); transition: border-color 0.2s, background 0.2s; max-width: 500px;
   }
-
-  #dropzone.drag-over .drop-card {
-    border-color: var(--accent);
-    background: rgba(0,229,160,0.05);
-  }
-
-  .drop-icon {
-    width: 56px;
-    height: 56px;
-    margin: 0 auto 24px;
-    opacity: 0.5;
-  }
-
-  .drop-title {
-    font-family: 'Avenir Next', 'Avenir', sans-serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: var(--text);
-  }
-
-  .drop-sub {
-    font-size: 0.7rem;
-    color: var(--muted);
-    line-height: 1.8;
-    margin-bottom: 24px;
-  }
-
-  .drop-formats {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .tag {
-    font-size: 0.6rem;
-    padding: 3px 10px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-  }
-
+  #dropzone.drag-over .drop-card { border-color: var(--accent); background: rgba(232,119,34,0.05); }
+  .drop-icon { width: 56px; height: 56px; margin: 0 auto 24px; opacity: 0.6; }
+  .drop-title { font-family: 'Avenir Next', 'Avenir', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
+  .drop-sub { font-size: 0.7rem; color: var(--muted); line-height: 1.8; margin-bottom: 24px; }
+  .drop-formats { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .tag { font-size: 0.6rem; padding: 3px 10px; border: 1px solid var(--border); border-radius: 2px; color: var(--muted); letter-spacing: 0.1em; }
+  .tag.main { border-color: var(--accent); color: var(--accent); }
   .btn-browse {
-    margin-top: 20px;
-    display: inline-block;
-    padding: 8px 22px;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    background: transparent;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
+    margin-top: 20px; display: inline-block; padding: 8px 22px; border: 1px solid var(--accent);
+    color: var(--accent); font-family: 'Space Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em;
+    background: transparent; cursor: pointer; transition: background 0.2s, color 0.2s;
   }
   .btn-browse:hover { background: var(--accent); color: #fff; }
-
   #file-input { display: none; }
 
   /* ── Canvas ── */
-  #canvas-container {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.5s;
-  }
+  #canvas-container { position: absolute; inset: 0; opacity: 0; transition: opacity 0.5s; }
   #canvas-container.visible { opacity: 1; }
   #three-canvas { width: 100% !important; height: 100% !important; display: block; }
+  #three-canvas.measuring, #three-canvas.drawing { cursor: crosshair; }
+  #three-canvas.erasing { cursor: none; }
 
-  /* ── Loading overlay ── */
+  /* polygon overlay is display-only; clicks go to the 3D canvas so you can orbit/zoom while drawing */
+  #poly-canvas { position: absolute; inset: 0; z-index: 6; pointer-events: none; display: none; }
+  #poly-canvas.visible { display: block; }
+
+  /* ── Loading ── */
   #loading {
-    position: absolute;
-    inset: 0;
-    background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 20;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
+    position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.3s;
   }
   #loading.active { opacity: 1; pointer-events: all; }
-
   .spinner {
-    width: 36px;
-    height: 36px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-bottom: 16px;
+    width: 36px; height: 36px; border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  .loading-text {
-    font-size: 0.7rem;
-    color: var(--muted);
-    letter-spacing: 0.12em;
-  }
-
-  #progress-bar {
-    width: 200px;
-    height: 2px;
-    background: var(--border);
-    margin-top: 12px;
-    border-radius: 1px;
-    overflow: hidden;
-  }
-  #progress-fill {
-    height: 100%;
-    background: var(--accent);
-    width: 0%;
-    transition: width 0.2s;
-  }
-
-
-
-  /* ── Controls panel ── */
-  /* controls-panel lives inside #bottom-bar */
-
-
-
-
-
-
+  .loading-text { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.12em; }
+  #progress-bar { width: 200px; height: 2px; background: var(--border); margin-top: 12px; border-radius: 1px; overflow: hidden; }
+  #progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.2s; }
 
   select {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.6rem;
-    padding: 3px 6px;
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    font-family: 'Space Mono', monospace; font-size: 0.62rem; padding: 3px 6px; border-radius: 2px; outline: none; cursor: pointer;
   }
-
   .mode-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.58rem;
-    padding: 3px 8px;
-    border-radius: 2px;
-    cursor: pointer;
-    letter-spacing: 0.06em;
-    transition: all 0.15s;
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    font-family: 'Space Mono', monospace; font-size: 0.58rem; padding: 4px 8px; border-radius: 2px;
+    cursor: pointer; letter-spacing: 0.06em; transition: all 0.15s;
   }
   .mode-btn:hover { border-color: var(--accent); color: var(--accent); }
   .mode-btn.active { border-color: var(--accent); color: #fff; background: var(--accent); }
 
-  .settings-title {
-    font-family: 'Avenir Next', 'Avenir', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: 0.1em;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 8px;
-    margin-bottom: 2px;
-  }
-
   /* ── Bottom bar ── */
   #bottom-bar {
-    position: absolute;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: none;
-    align-items: center;
-    gap: 8px;
-    z-index: 8;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    backdrop-filter: blur(8px);
-    overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    padding: 0 8px;
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); display: none;
+    align-items: center; gap: 8px; z-index: 8; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 6px; backdrop-filter: blur(8px); overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 0 8px; max-width: calc(100% - 32px);
   }
   #bottom-bar.visible { display: flex; }
-
-  #controls-panel {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 12px 16px;
-    font-size: 0.72rem;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-  }
-  #controls-panel .ctrl { display: flex; align-items: center; gap: 8px; }
-  #controls-panel .key {
-    background: var(--border);
-    color: var(--text);
-    padding: 3px 9px;
-    border-radius: 2px;
-    font-size: 0.68rem;
-  }
-
-  /* divider between keybinds and action buttons */
-  #bar-divider {
-    width: 1px;
-    height: 28px;
-    background: var(--border);
-    flex-shrink: 0;
-  }
-
-  #action-btns {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0 8px;
-  }
+  #controls-panel { display: flex; align-items: center; gap: 18px; padding: 12px 12px; font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em; }
+  #controls-panel .ctrl { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+  #controls-panel .key { background: var(--border); color: var(--text); padding: 3px 8px; border-radius: 2px; font-size: 0.64rem; }
+  #bar-divider { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
+  #action-btns { display: flex; align-items: center; gap: 6px; padding: 0 8px; }
   #action-btns button {
-    background: var(--accent);
-    border: 1px solid var(--accent2);
-    border-radius: 4px;
-    color: #fff;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    padding: 7px 14px;
-    cursor: pointer;
-    letter-spacing: 0.06em;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
-    font-weight: 600;
+    background: var(--accent); border: 1px solid var(--accent2); border-radius: 4px; color: #fff;
+    font-family: 'Space Mono', monospace; font-size: 0.72rem; padding: 7px 14px; cursor: pointer;
+    letter-spacing: 0.06em; transition: background 0.15s; font-weight: 600; white-space: nowrap;
   }
-  #action-btns button:hover { background: var(--accent2); border-color: var(--accent2); color: #fff; }
-  #measure-btn.active { background: var(--accent2) !important; border-color: var(--accent2) !important; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
-  #grade-btn.active { background: var(--accent2) !important; border-color: var(--accent2) !important; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+  #action-btns button:hover { background: var(--accent2); }
+  #measure-btn.active, #grade-btn.active { background: var(--accent2) !important; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
   #reload-btn { background: var(--surface) !important; border-color: var(--border) !important; color: var(--muted) !important; }
   #reload-btn:hover { background: var(--border) !important; color: var(--text) !important; }
+  @media (max-width: 1100px) { #controls-panel { display: none; } #bar-divider { display: none; } }
 
-  /* ── Grade check progress ── */
+  /* ── Hint banner (drawing instructions) ── */
+  #hint {
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 9;
+    background: var(--panel); border: 1px solid var(--accent); border-radius: 4px; padding: 8px 14px;
+    font-size: 0.64rem; color: var(--text); letter-spacing: 0.05em; display: none; white-space: nowrap;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  #hint.visible { display: block; }
+  #hint b { color: var(--accent); }
+
+  /* ── Grade progress ── */
   #grade-progress {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 28px 40px;
-    z-index: 20;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    min-width: 280px;
-    backdrop-filter: blur(12px);
-    font-size: 0.7rem;
-    color: var(--muted);
-    letter-spacing: 0.12em;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--panel);
+    border: 1px solid var(--border); border-radius: 3px; padding: 28px 40px; z-index: 20; display: none;
+    flex-direction: column; align-items: center; gap: 10px; min-width: 280px; backdrop-filter: blur(12px);
+    font-size: 0.7rem; color: var(--muted); letter-spacing: 0.12em;
   }
   #grade-progress.visible { display: flex; }
-  #grade-progress-bar {
-    width: 100%;
-    height: 2px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  #grade-progress-fill {
-    height: 100%;
-    background: var(--accent);
-    width: 0%;
-    transition: width 0.1s;
-  }
 
-  /* ── Polygon draw canvas ── */
-  #poly-canvas {
-    position: absolute;
-    inset: 0;
-    z-index: 15;
-    display: none;
-    cursor: crosshair;
-  }
-  #poly-canvas.visible { display: block; }
-
-  /* ── Grade controls (far right) ── */
+  /* ── Grade panels ── */
   #grade-controls {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 16px 14px;
-    z-index: 8;
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    min-width: 130px;
+    position: absolute; top: 16px; right: 16px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 6px; padding: 16px 14px; z-index: 8; display: none; flex-direction: column; gap: 6px;
+    backdrop-filter: blur(10px); box-shadow: 0 2px 12px rgba(0,0,0,0.08); min-width: 140px;
   }
   #grade-controls.visible { display: flex; }
   #grade-controls .mode-btn { width: 100%; text-align: center; }
+  #paint-palette { display: none; flex-wrap: wrap; gap: 4px; padding: 4px 0 2px; max-width: 150px; }
+  #paint-palette.visible { display: flex; }
+  .swatch-btn {
+    width: 26px; height: 20px; border-radius: 3px; border: 2px solid transparent; cursor: pointer; padding: 0;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15);
+  }
+  .swatch-btn.sel { border-color: var(--text); }
+  .swatch-btn.auto { width: auto; font-family: 'Space Mono', monospace; font-size: 0.52rem; padding: 0 5px; background: var(--surface); color: var(--muted); border: 2px solid var(--border); }
+  .swatch-btn.auto.sel { border-color: var(--text); color: var(--text); }
+  #three-canvas.painting { cursor: none; }
+  #erase-dot.paint { width: 14px; height: 14px; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.7), 0 0 4px rgba(0,0,0,0.5); }
+  .ctl-label { font-size: 0.56rem; color: var(--muted); letter-spacing: 0.08em; margin-top: 2px; }
+  #grade-controls select { width: 100%; }
+
   #grade-legend {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 19px 22px;
-    z-index: 8;
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    font-size: 0.86rem;
-    color: var(--text);
-    min-width: 204px;
+    position: absolute; top: 16px; left: 16px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 6px; padding: 18px 20px; z-index: 8; display: none; flex-direction: column; gap: 6px;
+    backdrop-filter: blur(10px); box-shadow: 0 2px 12px rgba(0,0,0,0.08); font-size: 0.86rem; min-width: 230px;
   }
   #grade-legend.visible { display: flex; }
   .legend-title {
-    font-family: 'Avenir Next', 'Avenir', sans-serif;
-    font-size: 0.94rem;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    border-bottom: 2px solid var(--accent);
-    padding-bottom: 9px;
-    margin-bottom: 7px;
+    font-family: 'Avenir Next', 'Avenir', sans-serif; font-size: 0.94rem; font-weight: 700; color: var(--accent);
+    letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 2px solid var(--accent); padding-bottom: 9px; margin-bottom: 7px;
   }
-  .legend-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.82rem;
-    color: var(--text);
-    font-weight: 500;
-  }
-  .legend-swatch {
-    width: 26px;
-    height: 17px;
-    border-radius: 3px;
-    flex-shrink: 0;
-    border: 1px solid rgba(0,0,0,0.1);
-  }
-
-  
+  .legend-row { display: flex; align-items: center; gap: 12px; font-size: 0.8rem; font-weight: 500; }
+  .legend-row .pct { margin-left: auto; color: var(--muted); font-size: 0.72rem; font-variant-numeric: tabular-nums; }
+  .legend-swatch { width: 26px; height: 17px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); }
+  #grade-summary { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 0.62rem; color: var(--muted); line-height: 1.7; letter-spacing: 0.04em; }
+  #grade-summary b { color: var(--text); }
 
   /* ── Measure result ── */
   #measure-result {
-    position: absolute;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--panel);
-    border: 1px solid var(--accent);
-    border-radius: 3px;
-    padding: 12px 16px;
-    z-index: 20;
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 260px;
-    backdrop-filter: blur(8px);
-    font-size: 0.65rem;
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%); background: var(--panel);
+    border: 1px solid var(--accent); border-radius: 3px; padding: 12px 16px; z-index: 20; display: none;
+    flex-direction: column; gap: 6px; min-width: 260px; backdrop-filter: blur(8px); font-size: 0.65rem;
   }
   #measure-result.visible { display: flex; }
   #measure-pts { color: var(--muted); letter-spacing: 0.06em; line-height: 1.8; }
-  #measure-vals { color: var(--accent); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; line-height: 2; }
+  #measure-vals { color: var(--accent); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; line-height: 2; white-space: pre; }
   #measure-clear {
-    align-self: flex-end;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.58rem;
-    padding: 3px 10px;
-    cursor: pointer;
-    letter-spacing: 0.08em;
-    transition: border-color 0.2s, color 0.2s;
+    align-self: flex-end; background: transparent; border: 1px solid var(--border); color: var(--muted);
+    font-family: 'Space Mono', monospace; font-size: 0.58rem; padding: 3px 10px; cursor: pointer; letter-spacing: 0.08em;
   }
   #measure-clear:hover { border-color: var(--accent2); color: var(--accent2); }
 
-  /* crosshair cursor in measure mode */
-  #three-canvas.measuring { cursor: crosshair; }
-  #three-canvas.erasing { cursor: none; }
   #erase-dot {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #fff;
-    border: 2px solid #e87722;
-    pointer-events: none;
-    display: none;
-    transform: translate(-50%, -50%);
-    z-index: 20;
-    box-shadow: 0 0 4px rgba(0,0,0,0.6);
+    position: absolute; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid #e87722;
+    pointer-events: none; display: none; transform: translate(-50%, -50%); z-index: 20; box-shadow: 0 0 4px rgba(0,0,0,0.6);
   }
   #erase-dot.visible { display: block; }
 
-  /* ── North compass button ── */
+  /* ── Cursor readout ── */
+  #readout {
+    position: absolute; bottom: 72px; left: 16px; z-index: 8; font-size: 0.6rem; color: #e8e4de;
+    background: rgba(10,12,15,0.6); padding: 4px 8px; border-radius: 3px; letter-spacing: 0.05em; display: none;
+    font-variant-numeric: tabular-nums;
+  }
+  #readout.visible { display: block; }
+
+  /* ── North compass ── */
   #north-btn {
-    position: absolute;
-    bottom: 56px;
-    right: 16px;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    z-index: 8;
-    display: none;
-    opacity: 0.85;
-    transition: opacity 0.2s, transform 0.1s;
+    position: absolute; bottom: 72px; right: 16px; width: 40px; height: 40px; cursor: pointer; z-index: 8;
+    display: none; opacity: 0.85; transition: opacity 0.2s, transform 0.1s;
   }
   #north-btn.visible { display: block; }
   #north-btn:hover { opacity: 1; transform: scale(1.08); }
   #compass-svg { width: 100%; height: 100%; }
 
-  
-
-  /* ── Error ── */
   #error-msg {
-    position: absolute;
-    bottom: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(220,50,50,0.08);
-    border: 1px solid rgba(220,50,50,0.35);
-    color: #cc2222;
-    font-size: 0.65rem;
-    padding: 10px 20px;
-    border-radius: 3px;
-    z-index: 30;
-    display: none;
-    letter-spacing: 0.05em;
-    text-align: center;
+    position: absolute; bottom: 72px; left: 50%; transform: translateX(-50%); background: #fff4f4;
+    border: 1px solid rgba(220,50,50,0.45); color: #cc2222; font-size: 0.65rem; padding: 10px 20px; border-radius: 3px;
+    z-index: 30; display: none; letter-spacing: 0.05em; text-align: center; max-width: 90%;
   }
   #error-msg.visible { display: block; }
-
-  /* colourbar */
-  #colorbar {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 14px;
-    height: 160px;
-    z-index: 8;
-    display: none;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-  }
-  #colorbar.visible { display: flex; }
-  #colorbar-gradient {
-    width: 14px;
-    flex: 1;
-    border-radius: 2px;
-    border: 1px solid var(--border);
-  }
-  .cb-label {
-    position: absolute;
-    font-size: 0.55rem;
-    color: var(--muted);
-    right: 22px;
-    letter-spacing: 0.05em;
-  }
-  #cb-max { top: 0; }
-  #cb-min { bottom: 0; }
 </style>
 </head>
 <body>
@@ -572,43 +244,45 @@
 
 <div id="main">
 
-  <!-- Drop zone -->
   <div id="dropzone">
     <div class="drop-card">
       <svg class="drop-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M28 4L52 20V36L28 52L4 36V20L28 4Z" stroke="#00e5a0" stroke-width="1.5" stroke-linejoin="round"/>
-        <path d="M28 4V52M4 20L52 20M4 36L52 36" stroke="#00e5a0" stroke-width="1" opacity="0.3"/>
+        <path d="M28 4L52 20V36L28 52L4 36V20L28 4Z" stroke="#e87722" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M28 4V52M4 20L52 20M4 36L52 36" stroke="#e87722" stroke-width="1" opacity="0.3"/>
       </svg>
-      <div class="drop-title">Drop a DEM file</div>
+      <div class="drop-title">Drop a surface</div>
       <div class="drop-sub">
-        Only supports .obj files<br>
-        <span style="color:var(--muted);font-size:0.65rem;letter-spacing:0.08em;">.xyz &amp; .tif under development</span>
+        Vulcan triangulations (.00t) and OBJ meshes<br>
+        <span style="font-size:0.64rem;letter-spacing:0.04em;">Gridded DEMs (.tif uncompressed, .asc, .xyz) in beta</span>
       </div>
       <div class="drop-formats">
-        <span class="tag">OBJ</span>
+        <span class="tag main">00T</span>
+        <span class="tag main">OBJ</span>
+        <span class="tag">TIF</span>
+        <span class="tag">ASC</span>
+        <span class="tag">XYZ</span>
       </div>
       <button class="btn-browse" onclick="document.getElementById('file-input').click()">BROWSE FILE</button>
     </div>
   </div>
 
-  <input type="file" id="file-input" accept=".tif,.tiff,.asc,.adf,.bin,.raw,.png,.xyz,.csv,.txt,.obj">
+  <input type="file" id="file-input" accept=".00t,.obj,.tif,.tiff,.asc,.xyz,.csv,.txt">
 
-  <!-- Canvas -->
   <div id="canvas-container">
     <canvas id="three-canvas"></canvas>
     <div id="erase-dot"></div>
   </div>
+  <canvas id="poly-canvas"></canvas>
 
-  <!-- Loading -->
   <div id="loading">
     <div class="spinner"></div>
-    <div class="loading-text" id="loading-text">PARSING DEM</div>
+    <div class="loading-text" id="loading-text">READING FILE</div>
     <div id="progress-bar"><div id="progress-fill"></div></div>
   </div>
 
-  <!-- Colorbar -->
+  <div id="hint"></div>
+  <div id="readout"></div>
 
-  <!-- Bottom toolbar -->
   <div id="bottom-bar">
     <div id="controls-panel">
       <div class="ctrl"><span class="key">LMB</span> ORBIT</div>
@@ -627,549 +301,644 @@
     </div>
   </div>
 
-  <!-- Grade polygon canvas overlay -->
-  <canvas id="poly-canvas"></canvas>
-
-  <!-- Grade progress bar -->
   <div id="grade-progress">
     <div class="spinner"></div>
     <span id="grade-progress-label">COMPUTING GRADE…</span>
-    <div id="grade-progress-bar"><div id="grade-progress-fill"></div></div>
   </div>
 
-  <!-- Grade legend -->
   <div id="grade-legend">
-    <div class="legend-title">GRADE CHECK</div>
-    <div class="legend-row"><span class="legend-swatch" style="background:rgb(0,170,0)"></span><span>0 – 8 %</span></div>
-    <div class="legend-row"><span class="legend-swatch" style="background:rgb(0,221,0)"></span><span>8 – 10 %</span></div>
-    <div class="legend-row"><span class="legend-swatch" style="background:rgb(255,255,0)"></span><span>10 – 11 %</span></div>
-    <div class="legend-row"><span class="legend-swatch" style="background:rgb(255,226,0)"></span><span>11 – 12 %</span></div>
-    <div class="legend-row"><span class="legend-swatch" style="background:rgb(255,102,0)"></span><span>12 – 13 %</span></div>
-    <div class="legend-row"><span class="legend-swatch" style="background:rgb(255,0,0)"></span><span>13 – 14 %</span></div>
-    <div class="legend-row"><span class="legend-swatch" style="background:rgb(127,0,0)"></span><span>14 – 25 %</span></div>
-    <div id="grade-status" style="display:none;"></div>
+    <div class="legend-title">Grade Check</div>
+    <div id="legend-rows"></div>
+    <div id="grade-summary"></div>
   </div>
 
-  <!-- Grade controls panel (far right) -->
   <div id="grade-controls">
-    <div class="legend-title" style="margin-bottom:8px;">LAYERS</div>
-    <button class="mode-btn active" id="toggle-grade-mesh-btn" onclick="toggleGradeMesh()">GRADE</button>
-    <button class="mode-btn active" id="toggle-contours-btn" onclick="toggleContours()">CONTOURS</button>
-    <button class="mode-btn" id="toggle-arrows-btn" onclick="toggleArrows()">ARROWS</button>
-    <button class="mode-btn" id="toggle-opacity-btn" onclick="toggleGradeOpacity()">TRANSPARENT</button>
+    <div class="legend-title" style="margin-bottom:6px;">Layers</div>
+    <button class="mode-btn active" id="toggle-grade-mesh-btn" onclick="toggleLayer('mesh')">GRADE</button>
+    <button class="mode-btn active" id="toggle-contours-btn" onclick="toggleLayer('contours')">CONTOURS</button>
+    <button class="mode-btn" id="toggle-arrows-btn" onclick="toggleLayer('arrows')">ARROWS</button>
+    <button class="mode-btn" id="toggle-opacity-btn" onclick="toggleTerrainOpacity()">TRANSPARENT</button>
+    <button class="mode-btn" id="grade-paint-btn" onclick="togglePaintMode()">🖌 PAINT</button>
+    <div id="paint-palette"></div>
     <button class="mode-btn" id="grade-erase-btn" onclick="toggleEraseMode()">✂ ERASE</button>
     <div style="width:100%;height:1px;background:var(--border);margin:6px 0;"></div>
-    <button class="mode-btn" id="grade-clear-btn" onclick="clearGrade()">CLEAR</button>
-    <button class="mode-btn" id="grade-redraw-btn" onclick="redrawGrade()">REDRAW</button>
+    <div class="ctl-label">METHOD</div>
+    <select id="grade-method" onchange="onSettingsChange()">
+      <option value="tri" selected>Triangles</option>
+      <option value="plane">Cell plane fit</option>
+    </select>
+    <div class="ctl-label">GRID ALIGN</div>
+    <select id="grid-align" onchange="onSettingsChange()">
+      <option value="north" selected>North</option>
+      <option value="poly">Along polygon</option>
+    </select>
+    <div class="ctl-label">EDGE FILL</div>
+    <select id="edge-fill" onchange="onSettingsChange()">
+      <option value="1" selected>To 1 m inside line</option>
+      <option value="2">To 2 m inside line</option>
+      <option value="5">To 5 m inside line</option>
+      <option value="0">Off (grid nodes only)</option>
+    </select>
+    <div class="ctl-label">GRID SPACING</div>
+    <select id="cell-size" onchange="onSettingsChange()">
+      <option value="5">5 m</option>
+      <option value="10">10 m</option>
+      <option value="15" selected>15 m</option>
+      <option value="20">20 m</option>
+      <option value="25">25 m</option>
+    </select>
+    <div class="ctl-label">CONTOURS</div>
+    <select id="contour-int" onchange="onSettingsChange()">
+      <option value="0.5">0.5 m</option>
+      <option value="1" selected>1 m</option>
+      <option value="2">2 m</option>
+      <option value="5">5 m</option>
+    </select>
+    <div style="width:100%;height:1px;background:var(--border);margin:6px 0;"></div>
+    <button class="mode-btn" onclick="exportGradeCSV()">⤓ EXPORT CSV</button>
+    <button class="mode-btn" onclick="clearGrade()">CLEAR</button>
+    <button class="mode-btn" onclick="redrawGrade()">REDRAW</button>
   </div>
 
-  <!-- Measure result overlay -->
   <div id="measure-result">
     <div id="measure-pts"></div>
     <div id="measure-vals"></div>
     <button id="measure-clear" onclick="clearMeasure()">&#10005; CLEAR</button>
   </div>
 
-  <!-- North compass button -->
-  <div id="north-btn" onclick="orientNorth()" title="Orient North">
+  <div id="north-btn" onclick="orientNorth()" title="Orient North (N)">
     <svg id="compass-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="20" cy="20" r="18" fill="var(--panel)" stroke="var(--border)" stroke-width="1"/>
+      <circle cx="20" cy="20" r="18" fill="rgba(255,255,255,0.94)" stroke="#ddd9d4" stroke-width="1"/>
       <g id="compass-needle">
         <polygon points="20,4 23,20 20,18 17,20" fill="#e87722"/>
-        <polygon points="20,36 23,20 20,22 17,20" fill="var(--muted)"/>
+        <polygon points="20,36 23,20 20,22 17,20" fill="#888077"/>
       </g>
       <text x="20" y="9" text-anchor="middle" fill="#e87722" font-size="6" font-family="Space Mono,monospace" font-weight="700">N</text>
     </svg>
   </div>
 
-  <!-- Error -->
   <div id="error-msg"></div>
-
 </div>
 
-<!-- Three.js from CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-// ─── GeoTIFF parser (minimal, pure JS, no worker) ────────────────────────────
-// Handles stripped/tiled, little/big-endian, Float32/Float64/Int16/UInt16/Int32/UInt32
+'use strict';
+/*
+ * Grade Check 2000
+ * ----------------
+ * All surfaces are loaded into one metric model:
+ *   { E, N, Z : Float64Array (real coordinates, metres), F : Uint32Array (0-based triangle indices) }
+ * Measurements and grade maths use those doubles directly. Only the rendered copy is converted
+ * to small float32 "world" units:  world = (metric - centre) / S, with Y up and -Z = north.
+ */
 
-const TIFF_TAGS = {
-  256: 'imageWidth', 257: 'imageLength', 258: 'bitsPerSample',
-  259: 'compression', 278: 'rowsPerStrip', 279: 'stripByteCounts',
-  273: 'stripOffsets', 322: 'tileWidth', 323: 'tileLength',
-  324: 'tileOffsets', 325: 'tileByteCounts', 339: 'sampleFormat',
-  277: 'samplesPerPixel', 284: 'planarConfig', 34264: 'modelTransformation',
-  33922: 'modelTiepoint', 33550: 'modelPixelScale', 42113: 'noDataValue'
-};
+// ═════════════════════════════════════════════════════════════════════════════
+//  FILE FORMATS
+// ═════════════════════════════════════════════════════════════════════════════
 
+// ── LZF (liblzf) decompress src[s..e) into dst at d. Returns bytes written. ──
+function lzfInto(src, s, e, dst, d, dMax) {
+  const d0 = d;
+  while (s < e) {
+    const c = src[s++];
+    if (c < 32) {                       // literal run of c+1 bytes
+      let l = c + 1;
+      if (s + l > e || d + l > dMax) throw new Error('LZF literal overrun');
+      while (l--) dst[d++] = src[s++];
+    } else {                            // back-reference
+      let l = c >> 5;
+      if (l === 7) l += src[s++];
+      let ref = d - ((c & 0x1f) << 8) - src[s++] - 1;
+      l += 2;
+      if (ref < d0 || d + l > dMax) throw new Error('LZF bad reference');
+      while (l--) dst[d++] = dst[ref++];
+    }
+  }
+  return d - d0;
+}
+
+function u64(dv, o) { return dv.getUint32(o, true) + dv.getUint32(o + 4, true) * 4294967296; }
+
+// ── Vulcan Variant (little-endian typed key/value list) ──
+function parseVariant(dv, u8, i, end) {
+  const out = {};
+  const txt = (a, b) => { let s = ''; for (let k = a; k < b && u8[k]; k++) s += String.fromCharCode(u8[k]); return s; };
+  while (i + 4 <= end) {
+    const kl = dv.getUint32(i, true);
+    if (kl < 4 || i + kl + 5 > end) break;
+    const key = txt(i + 4, i + kl); i += kl;
+    const type = u8[i], size = dv.getUint32(i + 1, true), p = i + 5;
+    let val = null;
+    if (type === 1) val = dv.getFloat64(p, true);
+    else if (type === 2) val = txt(p, i + size);
+    else if (type === 3) val = dv.getInt32(p, true);
+    else if (type === 5) val = parseVariant(dv, u8, p, i + size);
+    out[key] = val;
+    i += size;
+  }
+  return out;
+}
+
+// ── Maptek Vulcan compressed triangulation (.00t "vulZ") ──
+//   Outer: LE header, index pages of u64 block offsets, LZF blocks of 40 KiB
+//   Inner: BE u32 nV @0x48, nT @0x60; vertices f64 BE xyz @0x78; triangles 24 B each
+//          (3 x i32 BE 1-based + 12 reserved); then a display-attribute Variant.
+function parse00t(buf) {
+  const u8 = new Uint8Array(buf), dv = new DataView(buf);
+  const MAGIC = [0xEA, 0xFB, 0xA7, 0x8A, 0x76, 0x75, 0x6C, 0x5A];
+  if (u8.length < 0x1840 || MAGIC.some((b, i) => u8[i] !== b))
+    throw new Error('Not a Vulcan compressed triangulation (vulZ). Older uncompressed .00t files are not supported yet.');
+
+  const bs = dv.getUint32(0x14, true);
+  const rawSize = u64(dv, 0x20);
+  const dataEnd = u64(dv, 0x2C);
+  const nBlocks = Math.ceil(rawSize / bs);
+  const pages = [];
+  for (let p = 0; p < Math.ceil(nBlocks / 256); p++) pages.push(u64(dv, 0x103C + 8 * p));
+
+  const stream = new Uint8Array(nBlocks * bs);
+  const missing = new Uint8Array(nBlocks);
+  let nMissing = 0;
+  for (let k = 0; k < nBlocks; k++) {
+    let ok = false;
+    const po = pages[k >> 8] + 8 * (k & 255);
+    if (po + 8 <= u8.length) {
+      const off = u64(dv, po);
+      if (off + 8 <= u8.length) {
+        const clen = dv.getUint32(off, true), end = off + 8 + clen;
+        if (clen > 0 && end + 8 <= u8.length && dv.getUint32(end, true) === k &&
+            u8[end + 4] === 0xFA && u8[end + 5] === 0xFB && u8[end + 6] === 0xFC && u8[end + 7] === 0xFD) {
+          try {
+            const expect = Math.min(bs, rawSize - k * bs);
+            ok = lzfInto(u8, off + 8, end, stream, k * bs, (k + 1) * bs) >= expect;
+          } catch (e) { ok = false; }
+        }
+      }
+    }
+    if (!ok) { missing[k] = 1; nMissing++; }
+  }
+  const sdv = new DataView(stream.buffer);
+  const have = (a, b) => { for (let k = Math.floor(a / bs); k <= Math.floor((b - 1) / bs); k++) if (missing[k]) return false; return true; };
+  if (missing[0]) throw new Error('.00t header block is damaged — cannot read this file.');
+
+  const nV = sdv.getUint32(0x48, false), nT = sdv.getUint32(0x60, false);
+  const vOff = 0x78, tOff = vOff + 24 * nV, aOff = tOff + 24 * nT;
+  if (!have(vOff, aOff)) {
+    const pct = Math.round(100 * (nBlocks - nMissing) / nBlocks);
+    throw new Error(`This .00t is incomplete (${pct}% of data blocks readable` +
+      (u8.length < dataEnd ? `, file is ${(u8.length / 1e6).toFixed(1)} MB but should be ${(dataEnd / 1e6).toFixed(1)} MB` : '') +
+      '). Re-copy it from the server and try again.');
+  }
+
+  const E = new Float64Array(nV), N = new Float64Array(nV), Z = new Float64Array(nV);
+  for (let i = 0, o = vOff; i < nV; i++, o += 24) {
+    E[i] = sdv.getFloat64(o, false); N[i] = sdv.getFloat64(o + 8, false); Z[i] = sdv.getFloat64(o + 16, false);
+  }
+  const F = new Uint32Array(nT * 3);
+  for (let t = 0, o = tOff; t < nT; t++, o += 24) {
+    const a = sdv.getInt32(o, false) - 1, b = sdv.getInt32(o + 4, false) - 1, c = sdv.getInt32(o + 8, false) - 1;
+    if (a < 0 || b < 0 || c < 0 || a >= nV || b >= nV || c >= nV) throw new Error('.00t triangle index out of range — unexpected file layout.');
+    F[t * 3] = a; F[t * 3 + 1] = b; F[t * 3 + 2] = c;
+  }
+
+  let attrs = {};
+  try {
+    if (have(aOff, rawSize) && aOff + 13 < rawSize) {
+      const total = sdv.getUint32(aOff + 4, true);
+      attrs = parseVariant(sdv, stream, aOff + 13, Math.min(rawSize, aOff + 8 + total));
+    }
+  } catch (e) { attrs = {}; }
+
+  return { E, N, Z, F, attrs, source: '00t' };
+}
+
+// ── OBJ (Z up, e.g. Metashape / Pix4D / Vulcan export) ──
+function parseOBJ(text) {
+  const E = [], N = [], Z = [], F = [];
+  let p = 0;
+  const L = text.length;
+  while (p < L) {
+    let nl = text.indexOf('\n', p); if (nl < 0) nl = L;
+    const c0 = text.charCodeAt(p), c1 = text.charCodeAt(p + 1);
+    if (c0 === 118 && (c1 === 32 || c1 === 9)) {                // 'v '
+      const parts = text.slice(p + 2, nl).trim().split(/\s+/);
+      E.push(+parts[0]); N.push(+parts[1]); Z.push(+parts[2]);
+    } else if (c0 === 102 && (c1 === 32 || c1 === 9)) {         // 'f '
+      const parts = text.slice(p + 2, nl).trim().split(/\s+/);
+      const idx = [];
+      for (const s of parts) {
+        let v = parseInt(s, 10);
+        if (isNaN(v)) continue;
+        idx.push(v < 0 ? E.length + v : v - 1);                  // negative = relative
+      }
+      for (let k = 1; k + 1 < idx.length; k++) F.push(idx[0], idx[k], idx[k + 1]);   // fan (quads etc.)
+    }
+    p = nl + 1;
+  }
+  if (!E.length || !F.length) throw new Error('OBJ contains no triangles.');
+  return { E: Float64Array.from(E), N: Float64Array.from(N), Z: Float64Array.from(Z), F: Uint32Array.from(F), source: 'obj' };
+}
+
+// ── Regular grid → triangulated surface ──
+function gridToMesh(width, height, data, nodeE, nodeN, noData) {
+  const MAX = 1000;
+  const step = Math.max(1, Math.ceil(Math.max(width, height) / MAX));
+  const cols = Math.ceil(width / step), rows = Math.ceil(height / step);
+  const id = new Int32Array(cols * rows).fill(-1);
+  const E = [], N = [], Z = [], F = [];
+  const valid = z => isFinite(z) && !(noData !== null && noData !== undefined && Math.abs(z - noData) < 1e-6 * Math.max(1, Math.abs(noData)));
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const sr = Math.min(r * step, height - 1), sc = Math.min(c * step, width - 1);
+    const z = data[sr * width + sc];
+    if (!valid(z)) continue;
+    id[r * cols + c] = E.length; E.push(nodeE(sc)); N.push(nodeN(sr)); Z.push(z);
+  }
+  for (let r = 0; r + 1 < rows; r++) for (let c = 0; c + 1 < cols; c++) {
+    const a = id[r * cols + c], b = id[r * cols + c + 1], d = id[(r + 1) * cols + c], e = id[(r + 1) * cols + c + 1];
+    if (a >= 0 && b >= 0 && d >= 0) F.push(a, d, b);
+    if (b >= 0 && d >= 0 && e >= 0) F.push(b, d, e);
+  }
+  if (!F.length) throw new Error('Grid has no valid cells.');
+  return { E: Float64Array.from(E), N: Float64Array.from(N), Z: Float64Array.from(Z), F: Uint32Array.from(F) };
+}
+
+// ── GeoTIFF (uncompressed, single band) ──
 function parseTIFF(buffer) {
   const v = new DataView(buffer);
   const le = v.getUint16(0) === 0x4949;
-  const magic = v.getUint16(2, le);
-  if (magic !== 42) throw new Error('Not a valid TIFF file');
-
-  const readUint16 = (o) => v.getUint16(o, le);
-  const readUint32 = (o) => v.getUint32(o, le);
-  const readInt16  = (o) => v.getInt16(o, le);
-  const readInt32  = (o) => v.getInt32(o, le);
-  const readFloat32 = (o) => v.getFloat32(o, le);
-  const readFloat64 = (o) => v.getFloat64(o, le);
-
-  function readVal(type, offset) {
-    switch(type) {
-      case 1: return v.getUint8(offset);
-      case 3: return readUint16(offset);
-      case 4: return readUint32(offset);
-      case 5: return readUint32(offset) / readUint32(offset+4);
-      case 6: return v.getInt8(offset);
-      case 8: return readInt16(offset);
-      case 9: return readInt32(offset);
-      case 11: return readFloat32(offset);
-      case 12: return readFloat64(offset);
-      default: return readUint32(offset);
+  if (v.getUint16(2, le) !== 42) throw new Error('Not a valid TIFF (BigTIFF not supported).');
+  const tsize = t => [0,1,1,2,4,8,1,1,2,4,8,4,8][t] || 4;
+  const rv = (t, o) => {
+    switch (t) {
+      case 1: return v.getUint8(o); case 3: return v.getUint16(o, le); case 4: return v.getUint32(o, le);
+      case 5: return v.getUint32(o, le) / v.getUint32(o + 4, le); case 8: return v.getInt16(o, le);
+      case 9: return v.getInt32(o, le); case 11: return v.getFloat32(o, le); case 12: return v.getFloat64(o, le);
+      default: return v.getUint32(o, le);
     }
-  }
-
-  function typeSize(t) {
-    return [0,1,1,2,4,8,1,1,2,4,8,4,8][t] || 4;
-  }
-
-  function readString(offset, count) {
-    let s = '';
-    for (let i = 0; i < count-1; i++) s += String.fromCharCode(v.getUint8(offset+i));
-    return s;
-  }
-
-  let ifdOffset = readUint32(4);
-  const ifd = {};
-  const nEntries = readUint16(ifdOffset);
-  ifdOffset += 2;
-
-  for (let i = 0; i < nEntries; i++) {
-    const tag   = readUint16(ifdOffset);
-    const type  = readUint16(ifdOffset+2);
-    const count = readUint32(ifdOffset+4);
-    const sz    = typeSize(type) * count;
-    const valOffset = sz > 4 ? readUint32(ifdOffset+8) : ifdOffset+8;
-
-    if (type === 2) { // ASCII
-      ifd[tag] = readString(valOffset, count);
-    } else if (count === 1) {
-      ifd[tag] = readVal(type, valOffset);
-    } else {
-      const arr = [];
-      for (let j = 0; j < count; j++) arr.push(readVal(type, valOffset + j*typeSize(type)));
-      ifd[tag] = arr;
-    }
-    ifdOffset += 12;
-  }
-
-  const named = {};
-  for (const [k, name] of Object.entries(TIFF_TAGS)) {
-    if (ifd[k] !== undefined) named[name] = ifd[k];
-  }
-
-  const width  = named.imageWidth  || 1;
-  const height = named.imageLength || 1;
-  const bps    = Array.isArray(named.bitsPerSample) ? named.bitsPerSample[0] : (named.bitsPerSample || 32);
-  const sf     = Array.isArray(named.sampleFormat)  ? named.sampleFormat[0]  : (named.sampleFormat  || 1);
-  const compression = named.compression || 1;
-  if (compression !== 1) throw new Error(`Compressed TIFF (type ${compression}) not supported. Please export as uncompressed GeoTIFF.`);
-
-  const noDataStr = named.noDataValue;
-  const noData = noDataStr ? parseFloat(noDataStr) : null;
-
-  // Read pixel function
-  function readPixel(byteOffset) {
-    if (sf === 3) { // float
-      return bps === 64 ? readFloat64(byteOffset) : readFloat32(byteOffset);
-    } else if (sf === 2) { // signed int
-      return bps === 16 ? readInt16(byteOffset) : readInt32(byteOffset);
-    } else { // unsigned
-      return bps === 16 ? readUint16(byteOffset) : readUint32(byteOffset);
-    }
-  }
-  const bytesPerSample = bps / 8;
-
-  const data = new Float64Array(width * height);
-
-  if (named.tileOffsets) {
-    // Tiled TIFF
-    const tw = named.tileWidth;
-    const th = named.tileLength;
-    const tilesX = Math.ceil(width / tw);
-    const tilesY = Math.ceil(height / th);
-    const offsets = [].concat(named.tileOffsets);
-    let tIdx = 0;
-    for (let ty = 0; ty < tilesY; ty++) {
-      for (let tx = 0; tx < tilesX; tx++) {
-        const tOff = offsets[tIdx++];
-        for (let py = 0; py < th; py++) {
-          for (let px = 0; px < tw; px++) {
-            const imgX = tx*tw + px;
-            const imgY = ty*th + py;
-            if (imgX < width && imgY < height) {
-              const byteOff = tOff + (py*tw + px)*bytesPerSample;
-              data[imgY*width + imgX] = readPixel(byteOff);
-            }
-          }
-        }
-      }
-    }
-  } else {
-    // Stripped TIFF
-    const rps = named.rowsPerStrip || height;
-    const offsets = [].concat(named.stripOffsets);
-    const counts  = [].concat(named.stripByteCounts);
-    let row = 0;
-    for (let s = 0; s < offsets.length; s++) {
-      const stripRows = Math.min(rps, height - row);
-      for (let r = 0; r < stripRows; r++) {
-        for (let c = 0; c < width; c++) {
-          const byteOff = offsets[s] + (r*width + c)*bytesPerSample;
-          data[(row+r)*width + c] = readPixel(byteOff);
-        }
-      }
-      row += stripRows;
-    }
-  }
-
-  // Extract GeoTIFF georeferencing (pixel scale + tiepoint)
-  // Tag 33550 = ModelPixelScaleTag [scaleX, scaleY, scaleZ]
-  // Tag 33922 = ModelTiepointTag   [i,j,k, x,y,z, ...]
-  let pixelScaleX = 1, pixelScaleY = 1;
-  if (ifd[33550]) {
-    const ps = ifd[33550];
-    pixelScaleX = Array.isArray(ps) ? ps[0] : ps;
-    pixelScaleY = Array.isArray(ps) ? (ps[1] || ps[0]) : ps;
-  }
-
-  // Real-world width and height in map units
-  const realWidth  = width  * pixelScaleX;
-  const realHeight = height * pixelScaleY;
-
-  return { width, height, data, noData, pixelScaleX, pixelScaleY, realWidth, realHeight };
-}
-
-// ─── ASC Grid parser ──────────────────────────────────────────────────────────
-function parseASC(text) {
-  const lines = text.trim().split(/\r?\n/);
-  const hdr = {};
-  let dataStart = 0;
-  for (let i = 0; i < lines.length; i++) {
-    const m = lines[i].match(/^(\w+)\s+(.+)/i);
-    if (!m) { dataStart = i; break; }
-    hdr[m[1].toLowerCase()] = m[2].trim();
-    dataStart = i + 1;
-  }
-  const ncols  = parseInt(hdr.ncols);
-  const nrows  = parseInt(hdr.nrows);
-  const noData = parseFloat(hdr.nodata_value || hdr.nodata || '-9999');
-  const data   = new Float64Array(ncols * nrows);
-  let idx = 0;
-  for (let i = dataStart; i < lines.length; i++) {
-    const vals = lines[i].trim().split(/\s+/);
-    for (const v of vals) data[idx++] = parseFloat(v);
-  }
-  return { width: ncols, height: nrows, data, noData };
-}
-
-// ─── XYZ / CSV parser ─────────────────────────────────────────────────────────
-function parseXYZ(text) {
-  const lines = text.trim().split(/\r?\n/).filter(l => l && !l.startsWith('#'));
-  const sep = lines[0].includes(',') ? ',' : /\s+/;
-  const pts = lines.map(l => { const p = l.split(sep); return [+p[0],+p[1],+p[2]]; });
-  const xs = pts.map(p=>p[0]), ys = pts.map(p=>p[1]);
-  const minX=Math.min(...xs), maxX=Math.max(...xs);
-  const minY=Math.min(...ys), maxY=Math.max(...ys);
-
-  // Guess grid size
-  const uniqueX = [...new Set(xs.map(x=>x.toFixed(6)))].length;
-  const uniqueY = [...new Set(ys.map(y=>y.toFixed(6)))].length;
-  const ncols = uniqueX || Math.round(Math.sqrt(pts.length));
-  const nrows = uniqueY || Math.round(pts.length / ncols);
-
-  const data = new Float64Array(ncols * nrows).fill(NaN);
-  for (const [x,y,z] of pts) {
-    const c = Math.round((x-minX)/(maxX-minX) * (ncols-1));
-    const r = Math.round((y-minY)/(maxY-minY) * (nrows-1));
-    data[r*ncols + c] = z;
-  }
-  return { width: ncols, height: nrows, data, noData: NaN };
-}
-
-// ─── PNG heightmap parser ─────────────────────────────────────────────────────
-function parsePNG(buffer) {
-  return new Promise((resolve, reject) => {
-    const blob = new Blob([buffer], {type:'image/png'});
-    const url  = URL.createObjectURL(blob);
-    const img  = new Image();
-    img.onload = () => {
-      const c = document.createElement('canvas');
-      c.width = img.width; c.height = img.height;
-      const ctx = c.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      const px = ctx.getImageData(0,0,img.width,img.height).data;
-      const data = new Float64Array(img.width * img.height);
-      for (let i = 0; i < data.length; i++) {
-        // R channel as height (or combine RGB for Mapbox-style)
-        data[i] = px[i*4];
-      }
-      URL.revokeObjectURL(url);
-      resolve({ width: img.width, height: img.height, data, noData: null });
-    };
-    img.onerror = () => reject(new Error('Failed to decode PNG'));
-    img.src = url;
-  });
-}
-
-// ─── OBJ mesh parser ─────────────────────────────────────────────────────────
-// Handles Metashape-style OBJ: "v x y z r g b", "vn nx ny nz", "f v//vn" indices
-function parseOBJ(text) {
-  const lines = text.split(/\r?\n/);
-  const vx=[], vy=[], vz=[], vr=[], vg=[], vb=[];
-  const nx=[], ny=[], nz=[];
-  const fi=[], fj=[], fk=[];
-  const fni=[], fnj=[], fnk=[];  // normal indices per face
-  let hasVColor = false;
-
-  for (const line of lines) {
-    const c0 = line.charCodeAt(0), c1 = line.charCodeAt(1), c2 = line.charCodeAt(2);
-
-    if (c0 === 118 && c1 === 32) { // 'v '
-      const p = line.split(' ');
-      vx.push(+p[1]); vy.push(+p[2]); vz.push(+p[3]);
-      if (p.length >= 7) {
-        vr.push(+p[4]); vg.push(+p[5]); vb.push(+p[6]);
-        hasVColor = true;
-      }
-    } else if (c0 === 118 && c1 === 110 && c2 === 32) { // 'vn '
-      const p = line.split(' ');
-      nx.push(+p[1]); ny.push(+p[2]); nz.push(+p[3]);
-    } else if (c0 === 102 && c1 === 32) { // 'f '
-      const p = line.split(' ');
-      // handles: "v", "v/vt", "v//vn", "v/vt/vn"
-      const pa = p[1].split('/'), pb = p[2].split('/'), pc = p[3].split('/');
-      fi.push(parseInt(pa[0]) - 1);
-      fj.push(parseInt(pb[0]) - 1);
-      fk.push(parseInt(pc[0]) - 1);
-      // normal index is pa[2] for v/vt/vn or pa[1] for v//vn
-      if (pa.length >= 2) {
-        const ni = pa[pa.length-1], nj = pb[pb.length-1], nk = pc[pc.length-1];
-        if (ni) { fni.push(parseInt(ni)-1); fnj.push(parseInt(nj)-1); fnk.push(parseInt(nk)-1); }
-      }
-    }
-  }
-
-  const hasNormals = nx.length > 0 && fni.length === fi.length;
-
-  return {
-    type: 'mesh',
-    vx: new Float32Array(vx), vy: new Float32Array(vy), vz: new Float32Array(vz),
-    vr: hasVColor ? new Float32Array(vr) : null,
-    vg: hasVColor ? new Float32Array(vg) : null,
-    vb: hasVColor ? new Float32Array(vb) : null,
-    nx: hasNormals ? new Float32Array(nx) : null,
-    ny: hasNormals ? new Float32Array(ny) : null,
-    nz: hasNormals ? new Float32Array(nz) : null,
-    fi: new Uint32Array(fi), fj: new Uint32Array(fj), fk: new Uint32Array(fk),
-    fni: hasNormals ? new Uint32Array(fni) : null,
-    fnj: hasNormals ? new Uint32Array(fnj) : null,
-    fnk: hasNormals ? new Uint32Array(fnk) : null,
-    hasVColor, hasNormals,
-    nVerts: vx.length, nFaces: fi.length
   };
+  let o = v.getUint32(4, le);
+  const n = v.getUint16(o, le); o += 2;
+  const tag = {};
+  for (let i = 0; i < n; i++, o += 12) {
+    const id = v.getUint16(o, le), t = v.getUint16(o + 2, le), cnt = v.getUint32(o + 4, le);
+    const vo = tsize(t) * cnt > 4 ? v.getUint32(o + 8, le) : o + 8;
+    if (t === 2) { let s = ''; for (let k = 0; k < cnt - 1; k++) s += String.fromCharCode(v.getUint8(vo + k)); tag[id] = s; }
+    else if (cnt === 1) tag[id] = rv(t, vo);
+    else { const a = []; for (let k = 0; k < cnt; k++) a.push(rv(t, vo + k * tsize(t))); tag[id] = a; }
+  }
+  const first = x => Array.isArray(x) ? x[0] : x;
+  const W = tag[256], H = tag[257], bps = first(tag[258]) || 32, sf = first(tag[339]) || 1;
+  if ((tag[259] || 1) !== 1) throw new Error('Compressed GeoTIFF not supported — export it uncompressed (or use .asc).');
+  const rd = sf === 3 ? (bps === 64 ? (q => v.getFloat64(q, le)) : (q => v.getFloat32(q, le)))
+           : sf === 2 ? (bps === 16 ? (q => v.getInt16(q, le)) : (q => v.getInt32(q, le)))
+           : (bps === 16 ? (q => v.getUint16(q, le)) : (q => v.getUint32(q, le)));
+  const B = bps / 8, data = new Float64Array(W * H);
+  if (tag[324]) {
+    const tw = tag[322], th = tag[323], offs = [].concat(tag[324]), tx = Math.ceil(W / tw);
+    offs.forEach((to, ti) => {
+      const x0 = (ti % tx) * tw, y0 = Math.floor(ti / tx) * th;
+      for (let py = 0; py < th; py++) for (let px = 0; px < tw; px++) {
+        const X = x0 + px, Y = y0 + py;
+        if (X < W && Y < H) data[Y * W + X] = rd(to + (py * tw + px) * B);
+      }
+    });
+  } else {
+    const rps = tag[278] || H, offs = [].concat(tag[273]);
+    let row = 0;
+    for (const so of offs) {
+      const nr = Math.min(rps, H - row);
+      for (let r = 0; r < nr; r++) for (let c = 0; c < W; c++) data[(row + r) * W + c] = rd(so + (r * W + c) * B);
+      row += nr;
+    }
+  }
+  const ps = tag[33550] ? [].concat(tag[33550]) : [1, 1];
+  const tp = tag[33922] ? [].concat(tag[33922]) : [0, 0, 0, 0, 0, 0];
+  const sx = ps[0], sy = ps[1] || ps[0];
+  const x0 = tp[3] - tp[0] * sx, y0 = tp[4] + tp[1] * sy;
+  const nd = tag[42113] !== undefined ? parseFloat(tag[42113]) : null;
+  return gridToMesh(W, H, data, c => x0 + (c + 0.5) * sx, r => y0 - (r + 0.5) * sy, nd);
 }
 
-// ─── Colour maps ─────────────────────────────────────────────────────────────
-const CMAPS = {
-  rainbow: [[0,0,0.6],[0,0,1],[0,0.6,1],[0,1,1],[0,1,0.5],[0.5,1,0],[1,1,0],[1,0.6,0],[1,0,0],[1,1,1]],
-  terrain: [[0.2,0.2,0.5],[0.1,0.4,0.7],[0.2,0.6,0.4],[0.5,0.75,0.3],[0.8,0.7,0.5],[0.9,0.85,0.75],[1,1,1]],
-  viridis: [[0.267,0.004,0.329],[0.282,0.141,0.458],[0.253,0.265,0.530],[0.208,0.374,0.553],[0.163,0.476,0.558],[0.128,0.576,0.550],[0.157,0.671,0.502],[0.365,0.761,0.384],[0.678,0.834,0.196],[0.993,0.906,0.145]],
-  plasma:  [[0.05,0.03,0.53],[0.29,0.01,0.64],[0.49,0.01,0.66],[0.67,0.09,0.59],[0.82,0.22,0.46],[0.92,0.36,0.33],[0.97,0.51,0.19],[0.98,0.67,0.09],[0.94,0.83,0.16],[0.94,0.98,0.13]],
-  hot:     [[0,0,0],[0.5,0,0],[1,0,0],[1,0.5,0],[1,1,0],[1,1,0.5],[1,1,1]],
-  greyscale: [[0,0,0],[1,1,1]],
-  topo:    [[0,0.3,0.6],[0,0.5,0.8],[0.1,0.6,0.4],[0.4,0.7,0.2],[0.7,0.6,0.1],[0.8,0.4,0.1],[0.6,0.3,0.1],[0.8,0.8,0.8],[1,1,1]]
-};
-
-function sampleCmap(name, t) {
-  const stops = CMAPS[name];
-  const n = stops.length - 1;
-  const s = Math.max(0, Math.min(1, t));
-  const i = Math.floor(s * n);
-  const f = s * n - i;
-  const a = stops[Math.min(i, n)], b = stops[Math.min(i+1, n)];
-  return [a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f, a[2]+(b[2]-a[2])*f];
+// ── ESRI ASCII grid ──
+function parseASC(text) {
+  const lines = text.split(/\r?\n/);
+  const h = {}; let i = 0;
+  for (; i < lines.length; i++) {
+    const m = lines[i].trim().match(/^([a-zA-Z_]+)\s+(\S+)/);
+    if (!m) break;
+    h[m[1].toLowerCase()] = parseFloat(m[2]);
+  }
+  const W = h.ncols, H = h.nrows, cs = h.cellsize;
+  const data = new Float64Array(W * H).fill(NaN);
+  let k = 0;
+  for (; i < lines.length && k < data.length; i++) for (const s of lines[i].trim().split(/\s+/)) if (s) data[k++] = parseFloat(s);
+  const cx = h.xllcenter !== undefined ? h.xllcenter : h.xllcorner + cs / 2;
+  const cy = h.yllcenter !== undefined ? h.yllcenter : h.yllcorner + cs / 2;
+  return gridToMesh(W, H, data, c => cx + c * cs, r => cy + (H - 1 - r) * cs, h.nodata_value !== undefined ? h.nodata_value : -9999);
 }
 
-// ─── Three.js scene ───────────────────────────────────────────────────────────
-let renderer, scene, camera, mesh, wireframe, dirLight, animId;
-// zoom applied directly on wheel event
-let demData = null;
-let currentCmap = 'greyscale';
-let exaggeration = 2;
-let showWire = false;
-let colourMode = 'photo'; // 'photo' | 'cmap'
+// ── Gridded XYZ / CSV ──
+function parseXYZ(text) {
+  const xs = [], ys = [], zs = [];
+  for (const line of text.split(/\r?\n/)) {
+    const p = line.trim().split(/[\s,;]+/);
+    if (p.length < 3) continue;
+    const x = +p[0], y = +p[1], z = +p[2];
+    if (isFinite(x) && isFinite(y) && isFinite(z)) { xs.push(x); ys.push(y); zs.push(z); }
+  }
+  if (xs.length < 4) throw new Error('No XYZ points found.');
+  const key = a => Math.round(a * 1000);
+  const ux = [...new Set(xs.map(key))].sort((a, b) => a - b);
+  const uy = [...new Set(ys.map(key))].sort((a, b) => b - a);
+  if (ux.length * uy.length > 4 * xs.length)
+    throw new Error('XYZ points are scattered, not gridded — export a gridded surface, an OBJ or a .00t instead.');
+  const ix = new Map(ux.map((v, i) => [v, i])), iy = new Map(uy.map((v, i) => [v, i]));
+  const W = ux.length, H = uy.length, data = new Float64Array(W * H).fill(NaN);
+  for (let k = 0; k < xs.length; k++) data[iy.get(key(ys[k])) * W + ix.get(key(xs[k]))] = zs[k];
+  return gridToMesh(W, H, data, c => ux[c] / 1000, r => uy[r] / 1000, null);
+}
 
-// ── Measure tool state ────────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+//  TERRAIN MODEL — metric doubles + uniform-grid spatial index
+// ═════════════════════════════════════════════════════════════════════════════
+class Terrain {
+  constructor(m) {
+    Object.assign(this, m);
+    this.nV = m.E.length; this.nF = m.F.length / 3;
+    let e0 = Infinity, e1 = -Infinity, n0 = Infinity, n1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+    for (let i = 0; i < this.nV; i++) {
+      const e = m.E[i], n = m.N[i], z = m.Z[i];
+      if (e < e0) e0 = e; if (e > e1) e1 = e; if (n < n0) n0 = n; if (n > n1) n1 = n; if (z < z0) z0 = z; if (z > z1) z1 = z;
+    }
+    Object.assign(this, { e0, e1, n0, n1, z0, z1 });
+    this.cE = (e0 + e1) / 2; this.cN = (n0 + n1) / 2; this.cZ = (z0 + z1) / 2;
+    this.S = Math.max(e1 - e0, n1 - n0, 1e-6);         // metres per world unit
+    this.buildIndex();
+  }
+
+  buildIndex() {
+    const { E, N, F, nF } = this;
+    const w = Math.max(this.e1 - this.e0, 1e-6), h = Math.max(this.n1 - this.n0, 1e-6);
+    let cs = Math.sqrt(w * h / Math.max(1, nF / 2));
+    cs = Math.max(cs, Math.max(w, h) / 4096);
+    const gx = Math.max(1, Math.ceil(w / cs)), gy = Math.max(1, Math.ceil(h / cs));
+    const counts = new Uint32Array(gx * gy + 1);
+    const span = new Int32Array(nF * 4);
+    for (let t = 0; t < nF; t++) {
+      const a = F[t * 3], b = F[t * 3 + 1], c = F[t * 3 + 2];
+      const x0 = Math.max(0, Math.floor((Math.min(E[a], E[b], E[c]) - this.e0) / cs));
+      const x1 = Math.min(gx - 1, Math.floor((Math.max(E[a], E[b], E[c]) - this.e0) / cs));
+      const y0 = Math.max(0, Math.floor((Math.min(N[a], N[b], N[c]) - this.n0) / cs));
+      const y1 = Math.min(gy - 1, Math.floor((Math.max(N[a], N[b], N[c]) - this.n0) / cs));
+      span[t * 4] = x0; span[t * 4 + 1] = x1; span[t * 4 + 2] = y0; span[t * 4 + 3] = y1;
+      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) counts[y * gx + x + 1]++;
+    }
+    for (let i = 1; i < counts.length; i++) counts[i] += counts[i - 1];
+    const items = new Uint32Array(counts[counts.length - 1]);
+    const cur = counts.slice(0, gx * gy);
+    for (let t = 0; t < nF; t++) {
+      for (let y = span[t * 4 + 2]; y <= span[t * 4 + 3]; y++)
+        for (let x = span[t * 4]; x <= span[t * 4 + 1]; x++) items[cur[y * gx + x]++] = t;
+    }
+    Object.assign(this, { cs, gx, gy, cellStart: counts, cellItems: items });
+  }
+
+  // Elevation at (e, n), or NaN if off the surface
+  heightAt(e, n) {
+    const x = Math.floor((e - this.e0) / this.cs), y = Math.floor((n - this.n0) / this.cs);
+    if (x < 0 || y < 0 || x >= this.gx || y >= this.gy) return NaN;
+    const { E, N, Z, F } = this, c = y * this.gx + x;
+    for (let k = this.cellStart[c]; k < this.cellStart[c + 1]; k++) {
+      const t = this.cellItems[k], a = F[t * 3], b = F[t * 3 + 1], d = F[t * 3 + 2];
+      const x1 = E[a], y1 = N[a], x2 = E[b], y2 = N[b], x3 = E[d], y3 = N[d];
+      const den = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
+      if (Math.abs(den) < 1e-12) continue;
+      const w1 = ((y2 - y3) * (e - x3) + (x3 - x2) * (n - y3)) / den;
+      const w2 = ((y3 - y1) * (e - x3) + (x1 - x3) * (n - y3)) / den;
+      const w3 = 1 - w1 - w2, eps = -1e-9;
+      if (w1 >= eps && w2 >= eps && w3 >= eps) return w1 * Z[a] + w2 * Z[b] + w3 * Z[d];
+    }
+    return NaN;
+  }
+
+  // Exact ray/surface hit (metric). o, d: [e,n,z]; d need not be normalised. Returns t or -1.
+  rayHit(o, d) {
+    const { e0, n0, cs, gx, gy } = this;
+    const e1 = e0 + gx * cs, n1 = n0 + gy * cs;
+    let tmin = 0, tmax = Infinity;
+    for (const [oo, dd, lo, hi] of [[o[0], d[0], e0, e1], [o[1], d[1], n0, n1]]) {
+      if (Math.abs(dd) < 1e-15) { if (oo < lo || oo > hi) return -1; continue; }
+      let ta = (lo - oo) / dd, tb = (hi - oo) / dd;
+      if (ta > tb) [ta, tb] = [tb, ta];
+      tmin = Math.max(tmin, ta); tmax = Math.min(tmax, tb);
+    }
+    if (tmin > tmax) return -1;
+    if (!isFinite(tmax)) tmax = tmin + 1e9;
+    const pe = o[0] + d[0] * tmin, pn = o[1] + d[1] * tmin;
+    let x = Math.min(gx - 1, Math.max(0, Math.floor((pe - e0) / cs)));
+    let y = Math.min(gy - 1, Math.max(0, Math.floor((pn - n0) / cs)));
+    const sx = d[0] > 0 ? 1 : -1, sy = d[1] > 0 ? 1 : -1;
+    const tdx = Math.abs(d[0]) > 1e-15 ? cs / Math.abs(d[0]) : Infinity;
+    const tdy = Math.abs(d[1]) > 1e-15 ? cs / Math.abs(d[1]) : Infinity;
+    let tmx = Math.abs(d[0]) > 1e-15 ? (e0 + (x + (sx > 0 ? 1 : 0)) * cs - o[0]) / d[0] : Infinity;
+    let tmy = Math.abs(d[1]) > 1e-15 ? (n0 + (y + (sy > 0 ? 1 : 0)) * cs - o[1]) / d[1] : Infinity;
+    const { E, N, Z, F } = this;
+    for (let guard = 0; guard < gx + gy + 4; guard++) {
+      const tNext = Math.min(tmx, tmy, tmax);
+      const c = y * gx + x;
+      let best = Infinity;
+      for (let k = this.cellStart[c]; k < this.cellStart[c + 1]; k++) {
+        const t = this.cellItems[k], a = F[t * 3], b = F[t * 3 + 1], q = F[t * 3 + 2];
+        // Möller–Trumbore
+        const ax = E[a], ay = N[a], az = Z[a];
+        const e1x = E[b] - ax, e1y = N[b] - ay, e1z = Z[b] - az;
+        const e2x = E[q] - ax, e2y = N[q] - ay, e2z = Z[q] - az;
+        const px = d[1] * e2z - d[2] * e2y, py = d[2] * e2x - d[0] * e2z, pz = d[0] * e2y - d[1] * e2x;
+        const det = e1x * px + e1y * py + e1z * pz;
+        if (Math.abs(det) < 1e-14) continue;
+        const inv = 1 / det;
+        const tx = o[0] - ax, ty = o[1] - ay, tz = o[2] - az;
+        const u = (tx * px + ty * py + tz * pz) * inv;
+        if (u < -1e-9 || u > 1 + 1e-9) continue;
+        const qx = ty * e1z - tz * e1y, qy = tz * e1x - tx * e1z, qz = tx * e1y - ty * e1x;
+        const vv = (d[0] * qx + d[1] * qy + d[2] * qz) * inv;
+        if (vv < -1e-9 || u + vv > 1 + 1e-9) continue;
+        const tt = (e2x * qx + e2y * qy + e2z * qz) * inv;
+        if (tt > 0 && tt < best) best = tt;
+      }
+      if (best <= tNext * (1 + 1e-9) + 1e-9) return best;
+      if (tNext >= tmax) return -1;
+      if (tmx < tmy) { x += sx; tmx += tdx; } else { y += sy; tmy += tdy; }
+      if (x < 0 || y < 0 || x >= gx || y >= gy) return -1;
+    }
+    return -1;
+  }
+
+  // metric ↔ world
+  toWorld(e, n, z) { return new THREE.Vector3((e - this.cE) / this.S, (z - this.cZ) / this.S, -(n - this.cN) / this.S); }
+  toMetric(v) { return [this.cE + v.x * this.S, this.cN - v.z * this.S, this.cZ + v.y * this.S]; }
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  SCENE
+// ═════════════════════════════════════════════════════════════════════════════
+let renderer, scene, camera, mesh, dirLight;
+let terrain = null;          // Terrain instance for the loaded surface
+let fileLabel = '';
+
 let measureMode = false;
-let measurePoints = [];       // up to 2 THREE.Vector3 world points
-let measureMarkers = [];      // sprite/sphere markers in scene
-let measureLine = null;       // THREE.Line between points
-// Real-world scale factor: world units → metres (set when mesh is built)
-let worldToMetres = 1;
+let measurePts = [];         // metric [e,n,z]
+let measureObjs = [];
+
+const $ = id => document.getElementById(id);
+const typing = e => /INPUT|SELECT|TEXTAREA/.test(e.target.tagName);
 
 function initThree() {
-  const canvas = document.getElementById('three-canvas');
-  const container = document.getElementById('canvas-container');
-
+  const canvas = $('three-canvas'), container = $('canvas-container');
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x0a0c0f);
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.setSize(container.clientWidth, container.clientHeight);
 
   scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x0a0c0f, 0.015);
+  camera = new THREE.PerspectiveCamera(55, container.clientWidth / container.clientHeight, 0.0005, 1000);
 
-  camera = new THREE.PerspectiveCamera(55, container.clientWidth / container.clientHeight, 0.01, 1000);
-  camera.position.set(0, 0.8, 1.4);
-  camera.lookAt(0, 0, 0);
-
-  // Lights
-  const ambient = new THREE.AmbientLight(0xffffff, 0.05);
-  scene.add(ambient);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.08));
   dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
   dirLight.position.set(1, 3, 1.5);
   scene.add(dirLight);
-  const fillLight = new THREE.DirectionalLight(0xffffff, 0.04);
-  fillLight.position.set(-1, 0.5, -1);
-  scene.add(fillLight);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.06);
+  fill.position.set(-1, 0.5, -1);
+  scene.add(fill);
 
-  // Orbit controls (manual)
   setupOrbitControls(canvas);
-
-  // Resize handler
   window.addEventListener('resize', onResize);
 
-  // Keyboard
   window.addEventListener('keydown', e => {
-    if (e.key === 'r' || e.key === 'R') resetCamera();
-    if (e.key === 'n' || e.key === 'N') orientNorth();
-    if (e.key === 'm' || e.key === 'M') toggleMeasure();
-    if (e.key === 'g' || e.key === 'G') toggleGrade();
-    if (e.key === 'Escape') { if (measureMode) toggleMeasure(); if (gradeMode) toggleGrade(); }
+    if (typing(e) || !terrain) return;
+    const k = e.key.toLowerCase();
+    if (grade.drawing) {
+      if (e.key === 'Enter') { closePolygon(); return; }
+      if (e.key === 'Backspace') { grade.drawPts.pop(); e.preventDefault(); return; }
+    }
+    if (k === 'r') resetCamera();
+    else if (k === 'n') orientNorth();
+    else if (k === 'm') toggleMeasure();
+    else if (k === 'g') toggleGrade();
+    else if (e.key === 'Escape') {
+      if (measureMode) toggleMeasure();
+      if (grade.drawing) stopDrawing();
+      if (eraseMode) toggleEraseMode();
+      if (paintMode) togglePaintMode();
+    }
   });
 
-  // Measure click — fires only when not dragging
-  // Track drag distance to avoid firing click after orbit drag
-  let mouseDownX = 0, mouseDownY = 0;
-  canvas.addEventListener('mousedown', ev => { mouseDownX = ev.clientX; mouseDownY = ev.clientY; });
-
+  let downX = 0, downY = 0;
+  canvas.addEventListener('mousedown', ev => { downX = ev.clientX; downY = ev.clientY; });
   canvas.addEventListener('click', e => {
-    const dragDist = Math.hypot(e.clientX - mouseDownX, e.clientY - mouseDownY);
-    if (dragDist > 4) return; // was a drag, not a click
-
-    const rect = canvas.getBoundingClientRect();
-    const ndcX = ((e.clientX - rect.left) / rect.width)  *  2 - 1;
-    const ndcY = ((e.clientY - rect.top)  / rect.height) * -2 + 1;
-    const rc = new THREE.Raycaster();
-    rc.setFromCamera({ x: ndcX, y: ndcY }, camera);
-
-    if (eraseMode && gradeMesh) {
-      const hits = rc.intersectObject(gradeMesh, false);
-      if (hits.length > 0) eraseGradeTri(hits[0].faceIndex);
+    if (!terrain || paintMode) return;                                               // paint is handled on mousedown/move
+    if (grade.drawing && e.button === 0) { addPolyPoint(e); return; }                // LMB never orbits while drawing
+    if (Math.hypot(e.clientX - downX, e.clientY - downY) > 4) return;                // drag, not click
+    if (eraseMode && grade.mesh) {
+      const rc = new THREE.Raycaster();
+      rc.setFromCamera(ndc(e), camera);
+      const hits = rc.intersectObject(grade.mesh, false);
+      if (hits.length) eraseCell(grade.faceToCell[hits[0].faceIndex]);
       return;
     }
-
-    if (!measureMode || !mesh) return;
-    const hits = rc.intersectObject(mesh, false);
-    if (hits.length > 0) onMeasureClick(hits[0].point);
+    if (grade.drawing) { addPolyPoint(e); return; }
+    if (measureMode) { const p = pickMetric(e); if (p) onMeasureClick(p); }
   });
+  canvas.addEventListener('dblclick', () => { if (grade.drawing) closePolygon(); });
 
-  canvas.addEventListener('mousemove', updateEraseDot);
-  canvas.addEventListener('mouseleave', () => document.getElementById('erase-dot').classList.remove('visible'));
+  let lastMove = 0;
+  canvas.addEventListener('mousemove', e => {
+    grade.mouse = [e.offsetX, e.offsetY];
+    if (paintDown) paintAt(e);
+    if (eraseMode || paintMode) { const d = $('erase-dot'); d.style.left = e.offsetX + 'px'; d.style.top = e.offsetY + 'px'; d.classList.add('visible'); }
+    const now = performance.now();
+    if (terrain && !orbState.down && now - lastMove > 50) { lastMove = now; updateReadout(e); }
+  });
+  canvas.addEventListener('mouseleave', () => { $('erase-dot').classList.remove('visible'); $('readout').classList.remove('visible'); grade.mouse = null; });
 
   animate();
 }
 
-// ── Minimal orbit controls ────────────────────────────────────────────────────
+function ndc(e) {
+  const r = $('three-canvas').getBoundingClientRect();
+  return { x: ((e.clientX - r.left) / r.width) * 2 - 1, y: ((e.clientY - r.top) / r.height) * -2 + 1 };
+}
+
+// Screen → metric surface point [e,n,z] (or null)
+function pickMetric(e) {
+  if (!terrain) return null;
+  const rc = new THREE.Raycaster();
+  rc.setFromCamera(ndc(e), camera);
+  const o = terrain.toMetric(rc.ray.origin);
+  const S = terrain.S, d = [rc.ray.direction.x * S, -rc.ray.direction.z * S, rc.ray.direction.y * S];
+  const t = terrain.rayHit(o, d);
+  return t > 0 ? [o[0] + d[0] * t, o[1] + d[1] * t, o[2] + d[2] * t] : null;
+}
+
+// Screen → metric on a horizontal plane at elevation z (fallback when off-surface)
+function pickPlane(e, z) {
+  const rc = new THREE.Raycaster();
+  rc.setFromCamera(ndc(e), camera);
+  const o = terrain.toMetric(rc.ray.origin);
+  const S = terrain.S, d = [rc.ray.direction.x * S, -rc.ray.direction.z * S, rc.ray.direction.y * S];
+  if (Math.abs(d[2]) < 1e-12) return null;
+  const t = (z - o[2]) / d[2];
+  return t > 0 ? [o[0] + d[0] * t, o[1] + d[1] * t, z] : null;
+}
+
+function updateReadout(e) {
+  const p = pickMetric(e), el = $('readout');
+  if (!p) { el.classList.remove('visible'); return; }
+  el.textContent = `E ${p[0].toFixed(2)}   N ${p[1].toFixed(2)}   RL ${p[2].toFixed(2)}`;
+  el.classList.add('visible');
+}
+
+// ── Orbit controls ──
 let orbState = { down: false, type: null, lastX: 0, lastY: 0 };
-let spherical = { theta: 0.5, phi: 1.1, radius: 1.8 };
-let target = { x: 0, y: 0, z: 0 };
+let spherical = { theta: 0, phi: 1.0, radius: 1.6 };
 let panTarget = { x: 0, y: 0 };
 
 function setupOrbitControls(canvas) {
   canvas.addEventListener('mousedown', e => {
-    orbState.down = true;
-    orbState.type = e.button === 2 ? 'pan' : 'orbit';
-    orbState.lastX = e.clientX;
-    orbState.lastY = e.clientY;
+    if (paintMode && e.button === 0) { paintDown = true; paintAt(e); return; }   // LMB paints instead of orbiting
+    if (grade.drawing && e.button === 0) return;                                 // LMB places points, never orbits
+    orbState = { down: true, type: e.button === 2 ? 'pan' : 'orbit', lastX: e.clientX, lastY: e.clientY };
   });
-  window.addEventListener('mouseup', () => orbState.down = false);
+  window.addEventListener('mouseup', () => { orbState.down = false; paintDown = false; });
   window.addEventListener('mousemove', e => {
     if (!orbState.down) return;
-    const dx = e.clientX - orbState.lastX;
-    const dy = e.clientY - orbState.lastY;
-    orbState.lastX = e.clientX;
-    orbState.lastY = e.clientY;
+    const dx = e.clientX - orbState.lastX, dy = e.clientY - orbState.lastY;
+    orbState.lastX = e.clientX; orbState.lastY = e.clientY;
     if (orbState.type === 'orbit') {
       spherical.theta -= dx * 0.008;
-      spherical.phi = Math.max(0.05, Math.min(Math.PI * 0.95, spherical.phi - dy * 0.008));
+      spherical.phi = Math.max(0.02, Math.min(Math.PI * 0.49, spherical.phi - dy * 0.008));
     } else {
-      // Pan in the camera's horizontal plane
-      const cosT = Math.cos(spherical.theta);
-      const sinT = Math.sin(spherical.theta);
-      const panSpeed = 0.001 * spherical.radius;
-      panTarget.x -= (dx * cosT) * panSpeed;
-      panTarget.y -= (dx * -sinT) * panSpeed;
-      panTarget.x -= (dy * sinT * Math.cos(spherical.phi)) * panSpeed;
-      panTarget.y -= (dy * cosT * Math.cos(spherical.phi)) * panSpeed;
+      const c = Math.cos(spherical.theta), s = Math.sin(spherical.theta), sp = 0.0012 * spherical.radius;
+      panTarget.x -= (dx * c + dy * s) * sp;
+      panTarget.y -= (-dx * s + dy * c) * sp;
     }
     updateCamera();
   });
-  window.addEventListener('wheel', e => {
+  canvas.addEventListener('wheel', e => {
     e.preventDefault();
-    const dir = e.deltaY > 0 ? 1 : -1;
-    const factor = 1 + dir * 0.1;
-    const prevRadius = spherical.radius;
-    spherical.radius = Math.max(0.05, Math.min(8, spherical.radius * factor));
-
-    // Cursor-follow: raycast mesh first, fall back to horizontal plane at panTarget height
-    {
-      const rect = document.getElementById('three-canvas').getBoundingClientRect();
-      const ndcX = ((e.clientX - rect.left) / rect.width)  *  2 - 1;
-      const ndcY = ((e.clientY - rect.top)  / rect.height) * -2 + 1;
-      const rc = new THREE.Raycaster();
-      rc.setFromCamera({ x: ndcX, y: ndcY }, camera);
-
-      let hitX = null, hitZ = null;
-
-      // Try mesh first
-      if (mesh) {
-        const hits = rc.intersectObject(mesh, false);
-        if (hits.length > 0) { hitX = hits[0].point.x; hitZ = hits[0].point.z; }
-      }
-
-      // Fallback: intersect a horizontal plane at y=0 (average terrain level)
-      if (hitX === null) {
-        const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-        const pt = new THREE.Vector3();
-        rc.ray.intersectPlane(plane, pt);
-        if (pt) { hitX = pt.x; hitZ = pt.z; }
-      }
-
-      if (hitX !== null) {
-        const t = 1 - spherical.radius / prevRadius;
-        panTarget.x += (hitX - panTarget.x) * t;
-        panTarget.y += (hitZ - panTarget.y) * t;
-      }
+    const prev = spherical.radius;
+    spherical.radius = Math.max(0.002, Math.min(8, spherical.radius * (e.deltaY > 0 ? 1.1 : 1 / 1.1)));
+    // zoom toward the surface point under the cursor
+    const p = pickMetric(e);
+    if (p) {
+      const w = terrain.toWorld(p[0], p[1], p[2]);
+      const t = 1 - spherical.radius / prev;
+      panTarget.x += (w.x - panTarget.x) * t;
+      panTarget.y += (w.z - panTarget.y) * t;
     }
     updateCamera();
   }, { passive: false });
   canvas.addEventListener('contextmenu', e => e.preventDefault());
-  window.addEventListener('contextmenu', e => e.preventDefault());
 }
 
 function updateCamera() {
@@ -1177,1366 +946,895 @@ function updateCamera() {
   camera.position.set(
     s.radius * Math.sin(s.phi) * Math.sin(s.theta) + panTarget.x,
     s.radius * Math.cos(s.phi),
-    s.radius * Math.sin(s.phi) * Math.cos(s.theta) + panTarget.y
-  );
+    s.radius * Math.sin(s.phi) * Math.cos(s.theta) + panTarget.y);
   camera.lookAt(panTarget.x, 0, panTarget.y);
+  // keep near/far proportional to zoom so depth precision holds when zoomed in on a bench
+  camera.near = Math.max(1e-6, s.radius * 0.01);
+  camera.far = s.radius * 50 + 4;
+  camera.updateProjectionMatrix();
 }
 
-function resetCamera(worldH) {
-  const far = Math.max(1.0, worldH || 1.0) * 1.5;
-  spherical = { theta: 0.5, phi: 1.1, radius: Math.max(1.4, far) };
+function resetCamera() {
+  spherical = { theta: 0, phi: 0.9, radius: 1.5 };
   panTarget = { x: 0, y: 0 };
   updateCamera();
 }
 
-// ── Measure tool ──────────────────────────────────────────────────────────────
-function toggleMeasure() {
-  if (!demData) return;
-  measureMode = !measureMode;
-  const btn = document.getElementById('measure-btn');
-  const canvas = document.getElementById('three-canvas');
-  btn.classList.toggle('active', measureMode);
-  canvas.classList.toggle('measuring', measureMode);
-  if (!measureMode) clearMeasure();
-}
-
-function makeSphere(point) {
-  const r = spherical.radius * 0.008;
-  const geo = new THREE.SphereGeometry(r, 10, 10);
-  const mat = new THREE.MeshBasicMaterial({ color: 0x00e5a0, depthTest: false });
-  const s = new THREE.Mesh(geo, mat);
-  s.position.copy(point);
-  s.renderOrder = 999;
-  scene.add(s);
-  return s;
-}
-
-function onMeasureClick(point) {
-  if (measurePoints.length >= 2) clearMeasure();
-  measurePoints.push(point.clone());
-  measureMarkers.push(makeSphere(point));
-  if (measurePoints.length === 2) {
-    const lineMat = new THREE.LineBasicMaterial({ color: 0x00e5a0, depthTest: false });
-    const lineGeo = new THREE.BufferGeometry().setFromPoints(measurePoints);
-    measureLine = new THREE.Line(lineGeo, lineMat);
-    measureLine.renderOrder = 998;
-    scene.add(measureLine);
-    showMeasureResult();
-  } else {
-    document.getElementById('measure-result').classList.add('visible');
-    document.getElementById('measure-pts').textContent = 'PT 1 SET — click second point';
-    document.getElementById('measure-vals').textContent = '';
-  }
-}
-
-function showMeasureResult() {
-  const p1 = measurePoints[0], p2 = measurePoints[1];
-  const m = worldToMetres;
-  const dx = (p2.x - p1.x) * m;
-  const dy = (p2.y - p1.y) * m;
-  const dz = (p2.z - p1.z) * m;
-  const dist3d    = Math.sqrt(dx*dx + dy*dy + dz*dz);
-  const distHoriz = Math.sqrt(dx*dx + dz*dz);
-  const distVert  = Math.abs(dy);
-  const slope     = distHoriz > 0 ? (distVert / distHoriz * 100) : 0;
-  const bearing   = (Math.atan2(dx, -dz) * 180 / Math.PI + 360) % 360;
-  document.getElementById('measure-pts').innerHTML = 'PT 1 &rarr; PT 2';
-  document.getElementById('measure-vals').innerHTML =
-    '3D DIST &nbsp;&nbsp; ' + dist3d.toFixed(2) + ' m<br>' +
-    'H DIST &nbsp;&nbsp;&nbsp; ' + distHoriz.toFixed(2) + ' m<br>' +
-    'V DIFF &nbsp;&nbsp;&nbsp; ' + distVert.toFixed(2) + ' m<br>' +
-    'SLOPE &nbsp;&nbsp;&nbsp;&nbsp; ' + slope.toFixed(1) + ' %<br>' +
-    'BEARING &nbsp; ' + bearing.toFixed(1) + '\u00b0';
-  document.getElementById('measure-result').classList.add('visible');
-}
-
-function clearMeasure() {
-  measurePoints = [];
-  measureMarkers.forEach(function(m) { scene.remove(m); m.geometry.dispose(); m.material.dispose(); });
-  measureMarkers = [];
-  if (measureLine) { scene.remove(measureLine); measureLine.geometry.dispose(); measureLine.material.dispose(); measureLine = null; }
-  document.getElementById('measure-result').classList.remove('visible');
-}
-
-
-
-// ── Grade Check Tool ──────────────────────────────────────────────────────────
-const GRADE_THRESHOLDS = [
-  { max:  8, color: new THREE.Color(0x00aa00) },
-  { max: 10, color: new THREE.Color(0x00dd00) },
-  { max: 11, color: new THREE.Color(0xffff00) },
-  { max: 12, color: new THREE.Color(0xffe200) },
-  { max: 13, color: new THREE.Color(0xff6600) },
-  { max: 14, color: new THREE.Color(0xff0000) },
-  { max: 999,color: new THREE.Color(0x7f0000) },
-];
-
-function gradeColor(pct) {
-  for (const t of GRADE_THRESHOLDS) if (pct <= t.max) return t.color;
-  return GRADE_THRESHOLDS[GRADE_THRESHOLDS.length-1].color;
-}
-
-let gradeMode = false;
-let eraseMode = false;
-let gradeDrawing = false;          // actively drawing polygon
-let gradePolyPoints2D = [];        // screen [x,y] click points
-let gradeMesh = null;              // THREE.Mesh of grade triangles
-let gradeContours = null;          // THREE.LineSegments of 1m contours
-let gradeGrid = null;              // THREE.Points debug grid
-let gradeArrows = null;            // THREE.LineSegments slope arrows
-let gradePolyLine = null;          // THREE.Line polygon outline
-let gradePolyWorld = [];           // world-space XZ footprint of drawn polygon
-let gradePolyCtx = null;
-
-function toggleGrade() {
-  if (!demData) return;
-  gradeMode = !gradeMode;
-  const btn = document.getElementById('grade-btn');
-  btn.classList.toggle('active', gradeMode);
-  if (gradeMode) {
-    startDrawPolygon();
-  } else {
-    stopDrawPolygon();
-  }
-}
-
-function startDrawPolygon() {
-  const pc = document.getElementById('poly-canvas');
-  pc.width  = pc.parentElement.clientWidth;
-  pc.height = pc.parentElement.clientHeight;
-  pc.classList.add('visible');
-  gradePolyPoints2D = [];
-  gradePolyCtx = pc.getContext('2d');
-  gradeDrawing = true;
-  document.getElementById('grade-status').textContent = 'Click to draw polygon — double-click or click near start to close';
-
-  pc.onclick = onPolyClick;
-  pc.ondblclick = onPolyDblClick;
-  pc.onmousemove = onPolyMouseMove;
-}
-
-function stopDrawPolygon() {
-  const pc = document.getElementById('poly-canvas');
-  pc.classList.remove('visible');
-  pc.onclick = null; pc.ondblclick = null; pc.onmousemove = null;
-  // NOTE: do NOT clear gradePolyPoints2D here — runGradeCheck needs them
-  gradeDrawing = false;
-  if (gradePolyCtx) { gradePolyCtx.clearRect(0,0,pc.width,pc.height); }
-}
-
-function drawPolyOverlay(mouseX, mouseY) {
-  const pc = document.getElementById('poly-canvas');
-  const ctx = gradePolyCtx;
-  ctx.clearRect(0, 0, pc.width, pc.height);
-  if (gradePolyPoints2D.length === 0) return;
-
-  ctx.beginPath();
-  ctx.moveTo(gradePolyPoints2D[0][0], gradePolyPoints2D[0][1]);
-  for (let i = 1; i < gradePolyPoints2D.length; i++)
-    ctx.lineTo(gradePolyPoints2D[i][0], gradePolyPoints2D[i][1]);
-  if (mouseX !== null) ctx.lineTo(mouseX, mouseY);
-
-  ctx.strokeStyle = '#e87722';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([6,3]);
-  ctx.stroke();
-
-  // Draw vertex dots
-  for (const [x,y] of gradePolyPoints2D) {
-    ctx.beginPath();
-    ctx.arc(x, y, 4, 0, Math.PI*2);
-    ctx.fillStyle = '#e87722';
-    ctx.fill();
-  }
-  // First point close indicator
-  if (gradePolyPoints2D.length > 2 && mouseX !== null) {
-    const [fx,fy] = gradePolyPoints2D[0];
-    const d = Math.hypot(mouseX-fx, mouseY-fy);
-    if (d < 20) {
-      ctx.beginPath();
-      ctx.arc(fx, fy, 10, 0, Math.PI*2);
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([]);
-      ctx.stroke();
-    }
-  }
-}
-
-function onPolyMouseMove(e) {
-  if (!gradeDrawing) return;
-  drawPolyOverlay(e.offsetX, e.offsetY);
-}
-
-function onPolyClick(e) {
-  if (!gradeDrawing) return;
-  const x = e.offsetX, y = e.offsetY;
-
-  // Close if near first point
-  if (gradePolyPoints2D.length > 2) {
-    const [fx,fy] = gradePolyPoints2D[0];
-    if (Math.hypot(x-fx, y-fy) < 20) { closePolygon(); return; }
-  }
-  gradePolyPoints2D.push([x, y]);
-  drawPolyOverlay(x, y);
-}
-
-function onPolyDblClick(e) {
-  if (gradePolyPoints2D.length > 2) closePolygon();
-}
-
-function closePolygon() {
-  gradeDrawing = false;
-  // Capture canvas dims before stopDrawPolygon hides the canvas
-  const pc = document.getElementById('poly-canvas');
-  window._gradCanvasW = pc.width;
-  window._gradCanvasH = pc.height;
-  stopDrawPolygon();
-  document.getElementById('grade-status').textContent = 'Computing grade...';
-  setTimeout(runGradeCheck, 50);
-}
-
-// ── Point-in-polygon (2D ray casting) ────────────────────────────────────────
-function pointInPoly2D(px, py, poly) {
-  let inside = false;
-  for (let i=0, j=poly.length-1; i<poly.length; j=i++) {
-    const xi=poly[i][0], yi=poly[i][1], xj=poly[j][0], yj=poly[j][1];
-    if (((yi>py)!=(yj>py)) && (px < (xj-xi)*(py-yi)/(yj-yi)+xi)) inside=!inside;
-  }
-  return inside;
-}
-
-// ── Point-in-polygon in world XZ space (uses polyWorld Vector3 array) ────────
-function pointInPolyXZ(wx, wz, poly) {
-  let inside = false;
-  for (let i=0, j=poly.length-1; i<poly.length; j=i++) {
-    const xi=poly[i].x, yi=poly[i].z, xj=poly[j].x, yj=poly[j].z;
-    if (((yi>wz)!=(yj>wz)) && (wx < (xj-xi)*(wz-yi)/(yj-yi)+xi)) inside=!inside;
-  }
-  return inside;
-}
-
-// Clip a line segment to polygon — clip is pre-built CCW array of [x,z]
-function clipSegmentToPolyXZ(ax, az, bx, bz, clip) {
-  let t0 = 0, t1 = 1;
-  const dx = bx-ax, dz = bz-az;
-  const n = clip.length;
-  for (let i = 0; i < n; i++) {
-    const [ex0,ez0] = clip[i], [ex1,ez1] = clip[(i+1)%n];
-    const nx = -(ez1-ez0), nz = ex1-ex0;
-    const denom = nx*dx + nz*dz;
-    const num   = nx*(ax-ex0) + nz*(az-ez0);
-    if (Math.abs(denom) < 1e-12) { if (num < 0) return null; continue; }
-    const t = -num / denom;
-    if (denom < 0) { if (t > t0) t0 = t; } else { if (t < t1) t1 = t; }
-    if (t0 > t1) return null;
-  }
-  return [ax+t0*dx, az+t0*dz, ax+t1*dx, az+t1*dz];
-}
-
-// Sutherland-Hodgman clip — clip is pre-built CCW array of [x,z]
-function clipPolyXZ(poly2d, clip) {
-  let output = poly2d.slice();
-  const n = clip.length;
-  for (let i = 0; i < n && output.length > 0; i++) {
-    const input = output; output = [];
-    const [ex0,ez0] = clip[i], [ex1,ez1] = clip[(i+1)%n];
-    const nx = -(ez1-ez0), nz = ex1-ex0;
-    const inside = p => nx*(p[0]-ex0) + nz*(p[1]-ez0) >= 0;
-    const intersect = (a,b) => {
-      const da = nx*(a[0]-ex0)+nz*(a[1]-ez0), db = nx*(b[0]-ex0)+nz*(b[1]-ez0);
-      const t = da/(da-db);
-      return [a[0]+t*(b[0]-a[0]), a[1]+t*(b[1]-a[1])];
-    };
-    for (let k = 0; k < input.length; k++) {
-      const cur=input[k], prev=input[(k+input.length-1)%input.length];
-      const curIn=inside(cur), prevIn=inside(prev);
-      if (curIn) { if (!prevIn) output.push(intersect(prev,cur)); output.push(cur); }
-      else if (prevIn) output.push(intersect(prev,cur));
-    }
-  }
-  return output;
-}
-
-// Fan-triangulate clipped polygon, interpolating Y from original triangle
-function fanTriangulate(verts2d, A, B, C) {
-  function interpY(px, pz) {
-    const denom = (B[2]-C[2])*(A[0]-C[0]) + (C[0]-B[0])*(A[2]-C[2]);
-    if (Math.abs(denom) < 1e-12) return (A[1]+B[1]+C[1])/3;
-    const w0 = ((B[2]-C[2])*(px-C[0])+(C[0]-B[0])*(pz-C[2]))/denom;
-    const w1 = ((C[2]-A[2])*(px-C[0])+(A[0]-C[0])*(pz-C[2]))/denom;
-    return w0*A[1] + w1*B[1] + (1-w0-w1)*C[1];
-  }
-  const pts = verts2d.map(([px,pz]) => [px, interpY(px,pz), pz]);
-  const tris = [];
-  for (let i = 1; i < pts.length-1; i++) tris.push([pts[0], pts[i], pts[i+1]]);
-  return tris;
-}
-
-
-function screenToWorld(sx, sy) {
-  if (!mesh) return null;
-  const w = window._gradCanvasW || document.getElementById('poly-canvas').width;
-  const h = window._gradCanvasH || document.getElementById('poly-canvas').height;
-  const ndcX = (sx / w)  *  2 - 1;
-  const ndcY = (sy / h) * -2 + 1;
-  const rc = new THREE.Raycaster();
-  rc.setFromCamera({ x: ndcX, y: ndcY }, camera);
-  const hits = rc.intersectObject(mesh, false);
-  return hits.length > 0 ? hits[0].point : null;
-}
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-async function runGradeCheck() {
-  document.getElementById('grade-progress').classList.add('visible');
-  document.getElementById('grade-progress-fill').style.width = '5%';
-  document.getElementById('grade-progress-label').textContent = 'RAYCASTING POLYGON…';
-  await sleep(30);
-  console.log('runGradeCheck fired, points:', gradePolyPoints2D.length, 'mesh:', !!mesh, 'worldToMetres:', worldToMetres);
-  if (!mesh || gradePolyPoints2D.length < 3) {
-    document.getElementById('grade-progress').classList.remove('visible');
-    document.getElementById('grade-status').textContent = 'Need at least 3 points.';
-    return;
-  }
-
-  const canvasW = window._gradCanvasW || document.getElementById('canvas-container').clientWidth;
-  const canvasH = window._gradCanvasH || document.getElementById('canvas-container').clientHeight;
-  console.log('canvas dims:', canvasW, canvasH);
-
-  const polyWorld = [];
-  for (const [sx,sy] of gradePolyPoints2D) {
-    const w = screenToWorld(sx, sy);
-    if (w) polyWorld.push(w);
-  }
-  if (polyWorld.length < 3) {
-    document.getElementById('grade-progress').classList.remove('visible');
-    document.getElementById('grade-status').textContent = 'Polygon did not hit mesh (' + polyWorld.length + '/' + gradePolyPoints2D.length + ' points hit)';
-    return;
-  }
-
-  gradePolyWorld = polyWorld;  // original clicked vertices — used for all PIP tests
-  const gradePolyOrig = polyWorld;
-
-  // Precompute CCW clip array from original polygon
-  const gradeClipCCW = (() => {
-    let area = 0;
-    for (let i = 0; i < gradePolyWorld.length; i++) {
-      const j = (i+1) % gradePolyWorld.length;
-      area += gradePolyWorld[i].x * gradePolyWorld[j].z - gradePolyWorld[j].x * gradePolyWorld[i].z;
-    }
-    return area >= 0
-      ? gradePolyWorld.map(p => [p.x, p.z])
-      : [...gradePolyWorld].reverse().map(p => [p.x, p.z]);
-  })();
-
-  // Polygon world bbox
-  let wxMin=Infinity,wxMax=-Infinity,wzMin=Infinity,wzMax=-Infinity;
-  let wyMax=-Infinity;
-  for (const p of polyWorld) {
-    if(p.x<wxMin)wxMin=p.x; if(p.x>wxMax)wxMax=p.x;
-    if(p.z<wzMin)wzMin=p.z; if(p.z>wzMax)wzMax=p.z;
-    if(p.y>wyMax)wyMax=p.y;
-  }
-
-  // 15m in world units
-  const cellW = 15 / worldToMetres;
-
-  // Grid tightly aligned to bbox — no extra padding needed because we clip to polygon
-  const startX = wxMin - cellW;
-  const startZ = wzMin - cellW;
-  const endX   = wxMax + cellW;
-  const endZ   = wzMax + cellW;
-
-  const cols = Math.ceil((endX - startX) / cellW) + 1;
-  const rows = Math.ceil((endZ - startZ) / cellW) + 1;
-
-  document.getElementById('grade-progress-fill').style.width = '30%';
-  document.getElementById('grade-progress-label').textContent = 'RAYCASTING GRID (' + (cols*rows) + ' pts)…';
-  await sleep(30);
-
-  // Raycast only grid points inside the drawn polygon.
-  // Polygon gates which points are sampled — Delaunay then connects them naturally.
-  const rayOriginY = wyMax + 2.0;
-  const downDir = new THREE.Vector3(0, -1, 0);
-  const upRay = new THREE.Raycaster();
-  const gridY = [];
-
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const wx = startX + c * cellW;
-      const wz = startZ + r * cellW;
-      if (!pointInPolyXZ(wx, wz, gradePolyWorld)) { gridY.push(null); continue; }
-      upRay.set(new THREE.Vector3(wx, rayOriginY, wz), downDir);
-      const hits = upRay.intersectObject(mesh, false);
-      gridY.push(hits.length > 0 ? hits[0].point.y : null);
-    }
-  }
-
-  // worldToScreen using stored canvas dimensions (canvas may be hidden now)
-  function worldToScreen(wx, wy, wz) {
-    const v = new THREE.Vector3(wx, wy, wz);
-    v.project(camera);
-    return [(v.x+1)/2*canvasW, (1-v.y)/2*canvasH];
-  }
-
-  document.getElementById('grade-progress-fill').style.width = '70%';
-  document.getElementById('grade-progress-label').textContent = 'BUILDING TRIANGLES…';
-  await sleep(20);
-
-  const positions = [];
-  const colors    = [];
-  let triCount = 0;
-  const includedCells = new Set();
-  let cellBBoxMinX=Infinity, cellBBoxMaxX=-Infinity, cellBBoxMinZ=Infinity, cellBBoxMaxZ=-Infinity;
-
-  // Bowyer-Watson Delaunay triangulation on all valid grid points.
-  // Guarantees no edges cross — every point connects to its natural neighbours
-  // with no overlaps and no gaps.
-
-  // Collect all valid points as flat [x, z] list, keeping Y in a parallel array
-  const dtPts = [];   // [[x, z], ...]
-  const dtY   = [];   // y value for each point
-
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const y = gridY[r*cols+c];
-      if (y === null) continue;
-      const x = startX + c*cellW;
-      const z = startZ + r*cellW;
-      dtPts.push([x, z]);
-      dtY.push(y);
-      if (x < cellBBoxMinX) cellBBoxMinX = x; if (x > cellBBoxMaxX) cellBBoxMaxX = x;
-      if (z < cellBBoxMinZ) cellBBoxMinZ = z; if (z > cellBBoxMaxZ) cellBBoxMaxZ = z;
-    }
-  }
-
-  // Bowyer-Watson — works in XZ plane, Y looked up per point index
-  function delaunay(points) {
-    const n = points.length;
-    if (n < 3) return [];
-
-    // Super-triangle that contains all points
-    let minX=Infinity, maxX=-Infinity, minZ=Infinity, maxZ=-Infinity;
-    for (const [x,z] of points) {
-      if(x<minX)minX=x; if(x>maxX)maxX=x; if(z<minZ)minZ=z; if(z>maxZ)maxZ=z;
-    }
-    const dx = maxX-minX, dz = maxZ-minZ, delta = Math.max(dx,dz)*10;
-    const mx = (minX+maxX)/2, mz = (minZ+maxZ)/2;
-    const superTri = [
-      [mx - 2*delta, mz - delta],
-      [mx,           mz + 2*delta],
-      [mx + 2*delta, mz - delta],
-    ];
-    // Add super-triangle points at indices n, n+1, n+2
-    const allPts = points.concat(superTri);
-
-    // Each triangle: [i, j, k] indices into allPts
-    let triangles = [[n, n+1, n+2]];
-
-    function circumcircle(i, j, k) {
-      const [ax,az] = allPts[i], [bx,bz] = allPts[j], [cx,cz] = allPts[k];
-      const D = 2*(ax*(bz-cz) + bx*(cz-az) + cx*(az-bz));
-      if (Math.abs(D) < 1e-10) return null;
-      const ux = ((ax*ax+az*az)*(bz-cz) + (bx*bx+bz*bz)*(cz-az) + (cx*cx+cz*cz)*(az-bz)) / D;
-      const uz = ((ax*ax+az*az)*(cx-bx) + (bx*bx+bz*bz)*(ax-cx) + (cx*cx+cz*cz)*(bx-ax)) / D;
-      const r2 = (ax-ux)**2 + (az-uz)**2;
-      return { ux, uz, r2 };
-    }
-
-    for (let p = 0; p < n; p++) {
-      const [px, pz] = allPts[p];
-      const badTris = [];
-      for (const tri of triangles) {
-        const cc = circumcircle(tri[0], tri[1], tri[2]);
-        if (!cc) continue;
-        if ((px-cc.ux)**2 + (pz-cc.uz)**2 <= cc.r2 + 1e-10) badTris.push(tri);
-      }
-      // Find boundary polygon of bad triangles
-      const boundary = [];
-      for (const tri of badTris) {
-        const edges = [[tri[0],tri[1]],[tri[1],tri[2]],[tri[2],tri[0]]];
-        for (const [a,b] of edges) {
-          const shared = badTris.some(t => t !== tri && (
-            (t[0]===a||t[1]===a||t[2]===a) && (t[0]===b||t[1]===b||t[2]===b)
-          ));
-          if (!shared) boundary.push([a,b]);
-        }
-      }
-      // Remove bad triangles
-      for (const bad of badTris) {
-        const idx = triangles.indexOf(bad);
-        if (idx !== -1) triangles.splice(idx, 1);
-      }
-      // Re-triangulate with new point
-      for (const [a,b] of boundary) triangles.push([a, b, p]);
-    }
-
-    // Remove triangles that share a vertex with super-triangle
-    return triangles.filter(t => t[0]<n && t[1]<n && t[2]<n);
-  }
-
-  const dtTris = delaunay(dtPts);
-
-  function emitTri(A, B, C) {
-    const ab = [B[0]-A[0], B[1]-A[1], B[2]-A[2]];
-    const ac = [C[0]-A[0], C[1]-A[1], C[2]-A[2]];
-    const nx = ab[1]*ac[2] - ab[2]*ac[1];
-    const ny = ab[2]*ac[0] - ab[0]*ac[2];
-    const nz = ab[0]*ac[1] - ab[1]*ac[0];
-    const nlen = Math.sqrt(nx*nx+ny*ny+nz*nz);
-    if (nlen < 1e-10) return;
-    const cosA = Math.abs(ny)/nlen;
-    const sinA = Math.sqrt(Math.max(0,1-cosA*cosA));
-    const gradePct = cosA > 1e-6 ? (sinA/cosA)*100 : 999;
-    const col = gradeColor(gradePct);
-    for (const [vx,vy,vz] of [A,B,C]) {
-      positions.push(vx, vy + 0.30/worldToMetres, vz);
-      colors.push(col.r, col.g, col.b);
-    }
-    triCount++;
-  }
-
-  // Build face→dtTri index map: bufferFaceIndex → index into dtTris
-  // emitTri skips degenerate triangles so we track explicitly
-  const gradeFaceToDtTri = []; // gradeFaceToDtTri[bufferFaceIndex] = dtTriIndex
-  for (let fi = 0; fi < dtTris.length; fi++) {
-    const [i, j, k] = dtTris[fi];
-    const A = [dtPts[i][0], dtY[i], dtPts[i][1]];
-    const B = [dtPts[j][0], dtY[j], dtPts[j][1]];
-    const C = [dtPts[k][0], dtY[k], dtPts[k][1]];
-    const before = triCount;
-    emitTri(A, B, C);
-    if (triCount > before) gradeFaceToDtTri.push(fi); // was emitted
-    includedCells.add(0);
-  }
-
-  const dtTrisFiltered = dtTris;
-
-    if (triCount === 0) {
-    document.getElementById('grade-progress').classList.remove('visible');
-    document.getElementById('grade-status').textContent = 'No grid cells inside polygon — check the polygon is on the mesh.';
-    return;
-  }
-
-  if (gradeMesh) { scene.remove(gradeMesh); gradeMesh.geometry.dispose(); gradeMesh.material.dispose(); }
-
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-  geo.setAttribute('color',    new THREE.BufferAttribute(new Float32Array(colors), 3));
-
-  const mat = new THREE.MeshBasicMaterial({
-    vertexColors: true, side: THREE.DoubleSide,
-    transparent: true, opacity: 0.82,
-    polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2
-  });
-
-  gradeMesh = new THREE.Mesh(geo, mat);
-  gradeMesh.faceToDtTri = gradeFaceToDtTri; // bufferFaceIndex → dtTris index
-  scene.add(gradeMesh);
-
-  // ── 1m contours via marching squares on the 15m grid ──────────────────────
-  // For each cell, check each of the 4 edges for 1m Z crossings, emit line segments
-  if (gradeContours) { scene.remove(gradeContours); gradeContours.geometry.dispose(); gradeContours.material.dispose(); }
-
-  const contourPts = [];
-  const zOffset = 0.50 / worldToMetres; // 50cm lift (was 40cm + 10cm)
-
-  // Find Z range across valid grid nodes
-  let gzMin = Infinity, gzMax = -Infinity;
-  for (const v of gridY) { if (v !== null) { if(v<gzMin)gzMin=v; if(v>gzMax)gzMax=v; } }
-
-  // Real-world Z values: gridY is in world units, convert to metres for contour intervals
-  // Each 1m interval in real world = 1/worldToMetres in world units
-  const contourStepW = 1.0 / worldToMetres;
-  const zMinR = Math.ceil(gzMin / contourStepW) * contourStepW;
-  const zMaxR = Math.floor(gzMax / contourStepW) * contourStepW;
-
-  // Linear interpolation helper
-  function lerp1(v0, v1, iso) { return v0 === v1 ? 0 : (iso - v0) / (v1 - v0); }
-
-  // Contours: iterate over filtered Delaunay triangles
-  for (const [i, j, k] of dtTrisFiltered) {
-    const A = [dtPts[i][0], dtY[i], dtPts[i][1]];
-    const B = [dtPts[j][0], dtY[j], dtPts[j][1]];
-    const C = [dtPts[k][0], dtY[k], dtPts[k][1]];
-
-    const triYMin = Math.min(A[1], B[1], C[1]);
-    const triYMax = Math.max(A[1], B[1], C[1]);
-    const isoStart = Math.ceil(triYMin / contourStepW) * contourStepW;
-
-    const verts = [A, B, C];
-    for (let iso = isoStart; iso <= triYMax + 1e-9; iso += contourStepW) {
-      const edgePts = [];
-      for (let e = 0; e < 3; e++) {
-        const va = verts[e], vb = verts[(e+1)%3];
-        if ((va[1] < iso) !== (vb[1] < iso)) {
-          const t = lerp1(va[1], vb[1], iso);
-          edgePts.push([
-            va[0] + t*(vb[0]-va[0]),
-            iso,
-            va[2] + t*(vb[2]-va[2])
-          ]);
-        }
-      }
-      if (edgePts.length === 2) {
-        contourPts.push(
-          edgePts[0][0], edgePts[0][1]+zOffset, edgePts[0][2],
-          edgePts[1][0], edgePts[1][1]+zOffset, edgePts[1][2]
-        );
-      }
-    }
-  }
-
-  if (contourPts.length > 0) {
-    const cgeo = new THREE.BufferGeometry();
-    cgeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(contourPts), 3));
-    const cmat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 0.5, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
-    gradeContours = new THREE.LineSegments(cgeo, cmat);
-    scene.add(gradeContours);
-  }
-
-  // ── Slope arrows ──────────────────────────────────────────────────────────
-  if (gradeArrows) { scene.remove(gradeArrows); gradeArrows.geometry.dispose(); gradeArrows.material.dispose(); gradeArrows = null; }
-  {
-    const arrowPos = [], arrowCol = [];
-    const arrowY  = 0.35 / worldToMetres;
-    const arrowLen = cellW * 0.44;  // 0.55 * 0.8
-    const headLen  = cellW * 0.144; // 0.18 * 0.8
-
-    // Helper: emit one arrow for a triangle defined by 3 world points
-    function emitTriArrow(A, B, C) {
-      // Surface normal via cross product
-      const ab = [B[0]-A[0], B[1]-A[1], B[2]-A[2]];
-      const ac = [C[0]-A[0], C[1]-A[1], C[2]-A[2]];
-      const nx = ab[1]*ac[2] - ab[2]*ac[1];
-      const ny = ab[2]*ac[0] - ab[0]*ac[2];
-      const nz = ab[0]*ac[1] - ab[1]*ac[0];
-      const nlen = Math.sqrt(nx*nx+ny*ny+nz*nz);
-      if (nlen < 1e-10) return;
-      const cosA = Math.abs(ny) / nlen;
-      const sinA = Math.sqrt(Math.max(0, 1 - cosA*cosA));
-      const gradePct = cosA > 1e-6 ? (sinA/cosA)*100 : 999;
-      const col = gradeColor(gradePct);
-
-      // Downhill direction in XZ (normal X/Z components point uphill, so negate)
-      let dx = nx, dz = nz;
-      const dLen = Math.sqrt(dx*dx + dz*dz);
-      if (dLen < 1e-8) return;
-      dx /= dLen; dz /= dLen;
-
-      // Perpendicular in XZ
-      const px = -dz, pz = dx;
-
-      // Centroid
-      const cx = (A[0]+B[0]+C[0])/3;
-      const cy = (A[1]+B[1]+C[1])/3 + arrowY;
-      const cz = (A[2]+B[2]+C[2])/3;
-
-      // Triangle: tip pointing downhill, base at back
-      const half = arrowLen * 0.45;
-      const tipX  = cx + dx*half,       tipZ  = cz + dz*half;
-      const baseX = cx - dx*half,       baseZ = cz - dz*half;
-      const blX   = baseX + px*half*0.6, blZ = baseZ + pz*half*0.6;
-      const brX   = baseX - px*half*0.6, brZ = baseZ - pz*half*0.6;
-
-      const r=col.r, g=col.g, b=col.b;
-      // Three edges: tip→BL, BL→BR, BR→tip
-      arrowPos.push(tipX,cy,tipZ, blX,cy,blZ);  arrowCol.push(r,g,b, r,g,b);
-      arrowPos.push(blX,cy,blZ,   brX,cy,brZ);  arrowCol.push(r,g,b, r,g,b);
-      arrowPos.push(brX,cy,brZ,   tipX,cy,tipZ); arrowCol.push(r,g,b, r,g,b);
-    }
-
-    // Arrows: one per filtered Delaunay triangle
-    // Build a map from grade mesh faceIndex → arrow vertex start (6 verts per arrow)
-    // Some triangles are skipped by emitTriArrow (flat/degenerate), so we can't
-    // assume 1:1 correspondence — track explicitly.
-    const faceToArrow = new Map(); // faceIndex → start index in arrowPos
-    for (let fi = 0; fi < dtTrisFiltered.length; fi++) {
-      const [i, j, k] = dtTrisFiltered[fi];
-      const A = [dtPts[i][0], dtY[i], dtPts[i][1]];
-      const B = [dtPts[j][0], dtY[j], dtPts[j][1]];
-      const C = [dtPts[k][0], dtY[k], dtPts[k][1]];
-      const beforeLen = arrowPos.length / 3;
-      emitTriArrow(A, B, C);
-      const afterLen = arrowPos.length / 3;
-      if (afterLen > beforeLen) faceToArrow.set(fi, beforeLen); // arrow was emitted
-    }
-
-    if (arrowPos.length > 0) {
-      const ageo = new THREE.BufferGeometry();
-      ageo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(arrowPos), 3));
-      ageo.setAttribute('color',    new THREE.BufferAttribute(new Float32Array(arrowCol), 3));
-      const amat = new THREE.LineBasicMaterial({ vertexColors: true, linewidth: 1 });
-      gradeArrows = new THREE.LineSegments(ageo, amat);
-      gradeArrows.faceToArrow = faceToArrow; // store lookup on the object
-      gradeArrows.visible = false; // off by default
-      scene.add(gradeArrows);
-    }
-  }
-
-  // ── Grid points visualisation ─────────────────────────────────────────────
-  if (gradeGrid) { scene.remove(gradeGrid); gradeGrid.geometry.dispose(); gradeGrid.material.dispose(); gradeGrid = null; }
-  {
-    const gPos = [], gCol = [];
-    const gridY2 = 0.45 / worldToMetres;
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const wx = startX + c * cellW;
-        const wz = startZ + r * cellW;
-        const wy = gridY[r * cols + c];
-        if (wy === null) continue;
-        const inside = pointInPolyXZ(wx, wz, gradePolyWorld);
-        if (!inside) continue;
-        gPos.push(wx, wy + gridY2, wz);
-        gCol.push(1, 1, 1); // white dots
-      }
-    }
-    if (gPos.length > 0) {
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(gPos), 3));
-      geo.setAttribute('color',    new THREE.BufferAttribute(new Float32Array(gCol), 3));
-      const mat = new THREE.PointsMaterial({ vertexColors: true, size: 0.006, sizeAttenuation: true });
-      gradeGrid = new THREE.Points(geo, mat);
-      gradeGrid.visible = false; // off by default
-      scene.add(gradeGrid);
-    }
-  }
-
-  // Polygon boundary line removed — not displayed
-
-  document.getElementById('grade-legend').classList.add('visible');
-  document.getElementById('grade-controls').classList.add('visible');
-  document.getElementById('grade-progress').classList.remove('visible');
-  document.getElementById('grade-status').textContent = triCount + ' triangles · ' + Math.round(triCount/2) + ' cells';
-  document.getElementById('grade-btn').classList.remove('active');
-  document.getElementById('toggle-grade-mesh-btn').classList.add('active');
-  document.getElementById('toggle-contours-btn').classList.add('active');
-  document.getElementById('toggle-arrows-btn').classList.remove('active');
-  gradeMode = false;
-}
-
-function toggleGradeMesh() {
-  if (!gradeMesh) return;
-  gradeMesh.visible = !gradeMesh.visible;
-  document.getElementById('toggle-grade-mesh-btn').classList.toggle('active', gradeMesh.visible);
-}
-
-function toggleContours() {
-  if (!gradeContours) return;
-  gradeContours.visible = !gradeContours.visible;
-  document.getElementById('toggle-contours-btn').classList.toggle('active', gradeContours.visible);
-}
-
-function toggleArrows() {
-  if (!gradeArrows) return;
-  gradeArrows.visible = !gradeArrows.visible;
-  document.getElementById('toggle-arrows-btn').classList.toggle('active', gradeArrows.visible);
-}
-
-function togglePolygon() {
-  if (!gradePolyLine) return;
-  gradePolyLine.visible = !gradePolyLine.visible;
-  document.getElementById('toggle-polygon-btn').classList.toggle('active', gradePolyLine.visible);
-}
-
-function toggleGrid() {
-  if (!gradeGrid) return;
-  gradeGrid.visible = !gradeGrid.visible;
-  document.getElementById('toggle-grid-btn').classList.toggle('active', gradeGrid.visible);
-}
-
-function toggleGradeOpacity() {
-  if (!mesh) return;
-  const mat = mesh.material;
-  const isTransparent = mat.opacity < 0.5;
-  mat.opacity = isTransparent ? 1.0 : 0.35;
-  mat.transparent = !isTransparent;
-  mat.needsUpdate = true;
-  document.getElementById('toggle-opacity-btn').classList.toggle('active', !isTransparent);
-}
-
-function toggleEraseMode() {
-  eraseMode = !eraseMode;
-  const btn = document.getElementById('grade-erase-btn');
-  const canvas = document.getElementById('three-canvas');
-  btn.classList.toggle('active', eraseMode);
-  canvas.classList.toggle('erasing', eraseMode);
-  const dot = document.getElementById('erase-dot');
-  if (!eraseMode) dot.classList.remove('visible');
-}
-
-function updateEraseDot(e) {
-  if (!eraseMode) return;
-  const dot = document.getElementById('erase-dot');
-  const rect = document.getElementById('three-canvas').getBoundingClientRect();
-  dot.style.left = (e.clientX - rect.left) + 'px';
-  dot.style.top  = (e.clientY - rect.top)  + 'px';
-  dot.classList.add('visible');
-}
-
-function eraseGradeTri(bufferFaceIndex) {
-  if (!gradeMesh) return;
-
-  // Remove triangle from grade mesh (3 verts per face)
-  const geo = gradeMesh.geometry;
-  const pos = geo.attributes.position;
-  const col = geo.attributes.color;
-  const triStart = bufferFaceIndex * 3;
-  const n = pos.count;
-  const newPos = [], newCol = [];
-  for (let i = 0; i < n; i++) {
-    if (i === triStart || i === triStart+1 || i === triStart+2) continue;
-    newPos.push(pos.getX(i), pos.getY(i), pos.getZ(i));
-    newCol.push(col.getX(i), col.getY(i), col.getZ(i));
-  }
-  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(newPos), 3));
-  geo.setAttribute('color',    new THREE.BufferAttribute(new Float32Array(newCol), 3));
-  geo.computeBoundingSphere();
-
-  // Look up the dtTris index for this buffer face
-  const dtTriIndex = gradeMesh.faceToDtTri ? gradeMesh.faceToDtTri[bufferFaceIndex] : null;
-
-  // Update faceToDtTri — remove this entry, shift nothing (indices are stable)
-  if (gradeMesh.faceToDtTri) {
-    gradeMesh.faceToDtTri.splice(bufferFaceIndex, 1);
-  }
-
-  // Remove corresponding arrow using dtTriIndex → faceToArrow map
-  if (dtTriIndex !== null && gradeArrows && gradeArrows.faceToArrow) {
-    const arrowStart = gradeArrows.faceToArrow.get(dtTriIndex);
-    if (arrowStart !== undefined) {
-      const ageo = gradeArrows.geometry;
-      const apos = ageo.attributes.position;
-      const acol = ageo.attributes.color;
-      const an = apos.count;
-      const newAPos = [], newACol = [];
-      for (let i = 0; i < an; i++) {
-        if (i >= arrowStart && i < arrowStart + 6) continue;
-        newAPos.push(apos.getX(i), apos.getY(i), apos.getZ(i));
-        newACol.push(acol.getX(i), acol.getY(i), acol.getZ(i));
-      }
-      ageo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(newAPos), 3));
-      ageo.setAttribute('color',    new THREE.BufferAttribute(new Float32Array(newACol), 3));
-      ageo.computeBoundingSphere();
-
-      // Rebuild faceToArrow with shifted offsets
-      const newMap = new Map();
-      gradeArrows.faceToArrow.forEach((start, face) => {
-        if (face === dtTriIndex) return;
-        newMap.set(face, start > arrowStart ? start - 6 : start);
-      });
-      gradeArrows.faceToArrow = newMap;
-    }
-  }
-}
-
-function clearGrade() {
-  eraseMode = false;
-  const eraseBtn = document.getElementById('grade-erase-btn');
-  const canvas = document.getElementById('three-canvas');
-  if (eraseBtn) eraseBtn.classList.remove('active');
-  if (canvas) canvas.classList.remove('erasing');
-  if (gradeMesh) { scene.remove(gradeMesh); gradeMesh.geometry.dispose(); gradeMesh.material.dispose(); gradeMesh = null; }
-  if (gradeGrid) { scene.remove(gradeGrid); gradeGrid.geometry.dispose(); gradeGrid.material.dispose(); gradeGrid = null; }
-  if (gradeContours) { scene.remove(gradeContours); gradeContours.geometry.dispose(); gradeContours.material.dispose(); gradeContours = null; }
-  if (gradeArrows) { scene.remove(gradeArrows); gradeArrows.geometry.dispose(); gradeArrows.material.dispose(); gradeArrows = null; }
-  if (gradePolyLine) { scene.remove(gradePolyLine); gradePolyLine.geometry.dispose(); gradePolyLine.material.dispose(); gradePolyLine = null; }
-  gradePolyWorld = [];
-  document.getElementById('grade-legend').classList.remove('visible');
-  document.getElementById('grade-controls').classList.remove('visible');
-  document.getElementById('grade-status').textContent = '';
-  stopDrawPolygon();
-  gradeMode = false;
-  document.getElementById('grade-btn').classList.remove('active');
-}
-
-function redrawGrade() {
-  if (gradeMesh) { scene.remove(gradeMesh); gradeMesh.geometry.dispose(); gradeMesh.material.dispose(); gradeMesh = null; }
-  document.getElementById('grade-status').textContent = '';
-  gradeMode = true;
-  document.getElementById('grade-btn').classList.add('active');
-  startDrawPolygon();
-}
-
-
-// ── North orientation ─────────────────────────────────────────────────────────
 let northAnim = null;
-
 function orientNorth() {
   if (northAnim) cancelAnimationFrame(northAnim);
-
-  const startTheta = spherical.theta;
-  // Normalise to [-PI, PI] so we take the shortest arc to 0
-  let delta = -((startTheta % (2*Math.PI)) + (startTheta % (2*Math.PI) > Math.PI ? -2*Math.PI : startTheta % (2*Math.PI) < -Math.PI ? 2*Math.PI : 0));
-  // Simpler: just get shortest rotation to theta=0
-  let current = ((startTheta % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI); // 0..2PI
-  if (current > Math.PI) current -= 2*Math.PI;                           // -PI..PI
-  delta = -current;
-
-  const startPhi = spherical.phi;
-  const targetPhi = 1.1; // keep same tilt
-  const duration = 600; // ms
+  const th0 = spherical.theta, ph0 = spherical.phi;
+  let cur = ((th0 % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  if (cur > Math.PI) cur -= 2 * Math.PI;
   const t0 = performance.now();
-
-  function step(now) {
-    const t = Math.min((now - t0) / duration, 1);
-    const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t; // ease in-out quad
-    spherical.theta = startTheta + delta * ease;
-    spherical.phi   = startPhi + (targetPhi - startPhi) * ease;
+  const step = now => {
+    const t = Math.min((now - t0) / 600, 1), k = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    spherical.theta = th0 - cur * k;
+    spherical.phi = ph0 + (0.9 - ph0) * k;
     updateCamera();
-    updateCompass();
-    if (t < 1) northAnim = requestAnimationFrame(step);
-    else northAnim = null;
-  }
+    northAnim = t < 1 ? requestAnimationFrame(step) : null;
+  };
   northAnim = requestAnimationFrame(step);
 }
 
-// Rotate the compass needle to reflect current theta
-function updateCompass() {
-  const needle = document.getElementById('compass-needle');
-  if (!needle) return;
-  // theta=0 → camera looks from south → north arrow points up (0 deg)
-  // theta increases → camera rotates clockwise → north arrow rotates counter-clockwise
-  const deg = (spherical.theta * 180 / Math.PI) % 360;
-  needle.setAttribute('transform', `rotate(${deg}, 20, 20)`);
-}
-
 function animate() {
-  animId = requestAnimationFrame(animate);
-  // No per-frame zoom lerp — zoom is applied instantly on wheel event
+  requestAnimationFrame(animate);
   renderer.render(scene, camera);
-  updateCompass();
+  $('compass-needle').setAttribute('transform', `rotate(${(spherical.theta * 180 / Math.PI) % 360}, 20, 20)`);
+  if (grade.drawing) drawPolyOverlay();
 }
 
 function onResize() {
-  const c = document.getElementById('canvas-container');
+  const c = $('canvas-container');
   camera.aspect = c.clientWidth / c.clientHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(c.clientWidth, c.clientHeight);
 }
 
-// ─── Build terrain mesh ───────────────────────────────────────────────────────
-function buildMesh(dem, cmap, exag) {
-  // Remove old mesh
-  if (mesh)      { scene.remove(mesh); mesh.geometry.dispose(); mesh.material.dispose(); }
-  if (wireframe) { scene.remove(wireframe); wireframe.geometry.dispose(); wireframe.material.dispose(); }
-
-  const { width, height, data, noData } = dem;
-
-  // Use real-world pixel scale for correct aspect ratio.
-  // realWidth/realHeight are in map units (e.g. metres for projected CRS).
-  // Fallback to pixel dimensions if not available (PNG, XYZ, etc.)
-  const realW = dem.realWidth  || width;
-  const realH = dem.realHeight || height;
-
-  // Determine valid range
-  let zMin = Infinity, zMax = -Infinity;
-  for (let i = 0; i < data.length; i++) {
-    const z = data[i];
-    if (isNaN(z)) continue;
-    if (noData !== null && Math.abs(z - noData) < 0.001 * Math.abs(noData || 1)) continue;
-    if (z < zMin) zMin = z;
-    if (z > zMax) zMax = z;
-  }
-  if (!isFinite(zMin)) { zMin = 0; zMax = 1; }
-  const zRange = zMax - zMin || 1;
-
-  // Scale the mesh so 1 world unit = realW map units in X.
-  // Vertical: zRange metres maps to exag * (zRange / realW) world units.
-  const worldW = 1.0;
-  const worldH = realH / realW;          // correct geographic aspect ratio
-  const zScale = exag * (zRange / realW); // vertical exaggeration in world units
-  worldToMetres = realW; // 1 world unit = realW metres
-
-  // Subsample large DEMs for performance
-  const MAX_VERTS = 800;
-  const stepX = Math.max(1, Math.ceil(width  / MAX_VERTS));
-  const stepY = Math.max(1, Math.ceil(height / MAX_VERTS));
-  const cols  = Math.ceil(width  / stepX);
-  const rows  = Math.ceil(height / stepY);
-
-  const geo = new THREE.PlaneGeometry(worldW, worldH, cols-1, rows-1);
-  geo.rotateX(-Math.PI / 2);
-
-  const positions = geo.attributes.position.array;
-  const colors    = new Float32Array(positions.length);
-
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const si = r * cols + c;
-      const srcR = Math.min(Math.round(r * stepY), height-1);
-      const srcC = Math.min(Math.round(c * stepX), width-1);
-      const raw  = data[srcR * width + srcC];
-      const valid = !isNaN(raw) && (noData === null || Math.abs(raw - noData) > 0.001 * Math.abs(noData || 1));
-      const t = valid ? (raw - zMin) / zRange : 0;
-      const z = valid ? t * zScale : 0;
-
-      positions[si*3 + 1] = z; // Y is up
-
-      const rgb = sampleCmap(cmap, t);
-      colors[si*3]   = rgb[0];
-      colors[si*3+1] = rgb[1];
-      colors[si*3+2] = rgb[2];
-    }
-  }
-
-  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  geo.computeVertexNormals();
-
-  const mat = new THREE.MeshPhongMaterial({
-    vertexColors: true,
-    side: THREE.DoubleSide,
-    shininess: 0,
-    specular: new THREE.Color(0x000000),
-  });
-
-  mesh = new THREE.Mesh(geo, mat);
-  mesh.receiveShadow = true;
-  mesh.castShadow = true;
-  // Centre vertically: shift down by half the elevation range in world units
-  mesh.position.y = -zScale * 0.5;
-  scene.add(mesh);
-
-  // Wireframe overlay
-  const wMat = new THREE.MeshBasicMaterial({
-    color: 0x00e5a0,
-    wireframe: true,
-    transparent: true,
-    opacity: showWire ? 0.15 : 0
-  });
-  wireframe = new THREE.Mesh(geo.clone(), wMat);
-  wireframe.position.copy(mesh.position);
-  scene.add(wireframe);
-
-  return { zMin, zMax, zRange };
+function disposeObj(o) {
+  if (!o) return null;
+  scene.remove(o); o.geometry.dispose(); o.material.dispose();
+  return null;
 }
 
-// ─── Build mesh from OBJ data ─────────────────────────────────────────────────
-function buildMeshOBJ(obj, exag) {
-  if (mesh)      { scene.remove(mesh);      mesh.geometry.dispose();      mesh.material.dispose(); }
-  if (wireframe) { scene.remove(wireframe); wireframe.geometry.dispose(); wireframe.material.dispose(); }
-
-  const { vx, vy, vz, vr, vg, vb, nVerts, nFaces, hasVColor, hasNormals } = obj;
-  const { fi, fj, fk, fni, fnj, fnk, nx, ny, nz } = obj;
-
-  // Compute bounds
-  let xMin=Infinity,xMax=-Infinity,yMin=Infinity,yMax=-Infinity,zMin=Infinity,zMax=-Infinity;
-  for (let i = 0; i < nVerts; i++) {
-    if (vx[i]<xMin) xMin=vx[i]; if (vx[i]>xMax) xMax=vx[i];
-    if (vy[i]<yMin) yMin=vy[i]; if (vy[i]>yMax) yMax=vy[i];
-    if (vz[i]<zMin) zMin=vz[i]; if (vz[i]>zMax) zMax=vz[i];
+// ── Build terrain mesh (render copy) ──
+function buildTerrainMesh(t) {
+  mesh = disposeObj(mesh);
+  const pos = new Float32Array(t.nV * 3);
+  for (let i = 0; i < t.nV; i++) {
+    pos[i * 3] = (t.E[i] - t.cE) / t.S;
+    pos[i * 3 + 1] = (t.Z[i] - t.cZ) / t.S;
+    pos[i * 3 + 2] = -(t.N[i] - t.cN) / t.S;
   }
-  const xRange = xMax-xMin || 1;
-  const yRange = yMax-yMin || 1;
-  const zRange = zMax-zMin || 1;
-  const maxRange = Math.max(xRange, yRange);
-  const zScaleOBJ = (zRange / maxRange); // true 1:1 scale — exag slider does not apply to OBJ
-  worldToMetres = maxRange; // 1 world unit = maxRange metres
-
   const geo = new THREE.BufferGeometry();
-
-  // ── Positions ──────────────────────────────────────────────────────────────
-  // OBJ (Metashape): X=right, Y=north/depth, Z=elevation(up)
-  // Three.js:        X=right, Y=up,           Z=toward viewer
-  // Map: OBJ X→X, OBJ Z→Y(up), OBJ Y→-Z  — negating preserves CCW winding
-  const pos = new Float32Array(nVerts * 3);
-  for (let i = 0; i < nVerts; i++) {
-    pos[i*3]   =  (vx[i] - xMin - xRange*0.5) / maxRange;
-    pos[i*3+1] =  (vz[i] - zMin) / zRange * zScaleOBJ;
-    pos[i*3+2] = -(vy[i] - yMin - yRange*0.5) / maxRange;
-  }
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-
-  // ── Normals ────────────────────────────────────────────────────────────────
-  // Axis swap matches position transform: OBJ(nx,ny,nz) → THREE(nx, nz, -ny)
-  // Scale is uniform so no inverse-transpose correction needed — just swap and renorm.
-  if (hasNormals) {
-    const norm = new Float32Array(nVerts * 3);
-    for (let i = 0; i < nVerts; i++) {
-      const tnx =  nx[i];
-      const tny =  nz[i];   // OBJ Z (up) → THREE Y (up)
-      const tnz = -ny[i];   // OBJ Y (north) → THREE -Z
-      const len = Math.sqrt(tnx*tnx + tny*tny + tnz*tnz) || 1;
-      norm[i*3]   = tnx/len;
-      norm[i*3+1] = tny/len;
-      norm[i*3+2] = tnz/len;
-    }
-    geo.setAttribute('normal', new THREE.BufferAttribute(norm, 3));
-  }
-
-  // ── Vertex colours ─────────────────────────────────────────────────────────
-  const cols = new Float32Array(nVerts * 3);
-  if (hasVColor && colourMode === 'photo') {
-    for (let i = 0; i < nVerts; i++) {
-      cols[i*3]=vr[i]; cols[i*3+1]=vg[i]; cols[i*3+2]=vb[i];
-    }
-  } else {
-  // Solid white — lighting provides all the hillshade contrast
-    for (let i = 0; i < nVerts; i++) { cols[i*3]=1.0; cols[i*3+1]=1.0; cols[i*3+2]=1.0; }
-  }
-  geo.setAttribute('color', new THREE.BufferAttribute(cols, 3));
-
-  // ── Face indices ───────────────────────────────────────────────────────────
-  const idx = new Uint32Array(nFaces * 3);
-  for (let i = 0; i < nFaces; i++) {
-    idx[i*3]=fi[i]; idx[i*3+1]=fj[i]; idx[i*3+2]=fk[i];
-  }
-  geo.setIndex(new THREE.BufferAttribute(idx, 1));
-  // flatShading computes per-face normals internally — no need for vertex normals
-
-  // ── Material — flat shading matches Point Studio's crisp edge rendering ──────
-  const mat = new THREE.MeshPhongMaterial({
-    vertexColors: true,
-    side: THREE.DoubleSide,
-    shininess: 0,
-    specular: new THREE.Color(0x000000),
-    flatShading: true,
-  });
-
+  geo.setIndex(new THREE.BufferAttribute(t.F, 1));
+  geo.computeBoundingSphere();
+  const mat = new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide, shininess: 0, specular: 0x000000, flatShading: true });
   mesh = new THREE.Mesh(geo, mat);
-  mesh.position.y = -zScaleOBJ * 0.5;
   scene.add(mesh);
-
-  // Wireframe overlay
-  const wMat = new THREE.MeshBasicMaterial({
-    color: 0x00e5a0, wireframe: true, transparent: true,
-    opacity: showWire ? 0.12 : 0
-  });
-  wireframe = new THREE.Mesh(geo.clone(), wMat);
-  wireframe.position.copy(mesh.position);
-  scene.add(wireframe);
-
-  return { zMin, zMax, zRange: zMax-zMin, isOBJ: true };
 }
 
+// ═════════════════════════════════════════════════════════════════════════════
+//  MEASURE
+// ═════════════════════════════════════════════════════════════════════════════
+function toggleMeasure() {
+  if (!terrain) return;
+  if (grade.drawing) stopDrawing();
+  measureMode = !measureMode;
+  $('measure-btn').classList.toggle('active', measureMode);
+  $('three-canvas').classList.toggle('measuring', measureMode);
+  if (!measureMode) clearMeasure();
+}
 
-function rebuildColors(dem, cmap) {
-  if (!mesh || !dem) return;
-  const { width, height, data, noData } = dem;
-  let zMin = Infinity, zMax = -Infinity;
-  for (let i = 0; i < data.length; i++) {
-    const z = data[i];
-    if (isNaN(z)) continue;
-    if (noData !== null && Math.abs(z - noData) < 0.001 * Math.abs(noData || 1)) continue;
-    if (z < zMin) zMin = z;
-    if (z > zMax) zMax = z;
+function marker(p) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(spherical.radius * 0.008, 10, 10),
+                           new THREE.MeshBasicMaterial({ color: 0xe87722, depthTest: false }));
+  m.position.copy(terrain.toWorld(...p)); m.renderOrder = 999;
+  scene.add(m); return m;
+}
+
+function onMeasureClick(p) {
+  if (measurePts.length >= 2) clearMeasure();
+  measurePts.push(p); measureObjs.push(marker(p));
+  $('measure-result').classList.add('visible');
+  if (measurePts.length < 2) {
+    $('measure-pts').textContent = `PT 1  E ${p[0].toFixed(2)}  N ${p[1].toFixed(2)}  RL ${p[2].toFixed(2)} — click second point`;
+    $('measure-vals').textContent = '';
+    return;
   }
-  const zRange = zMax - zMin || 1;
+  const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(measurePts.map(q => terrain.toWorld(...q))),
+                              new THREE.LineBasicMaterial({ color: 0xe87722, depthTest: false }));
+  line.renderOrder = 998; scene.add(line); measureObjs.push(line);
+  const [a, b] = measurePts, dx = b[0] - a[0], dy = b[1] - a[1], dz = b[2] - a[2];
+  const h = Math.hypot(dx, dy);
+  $('measure-pts').textContent = 'PT 1 → PT 2';
+  $('measure-vals').textContent =
+    `3D DIST   ${Math.hypot(h, dz).toFixed(2)} m\n` +
+    `H DIST    ${h.toFixed(2)} m\n` +
+    `V DIFF    ${dz >= 0 ? '+' : ''}${dz.toFixed(2)} m\n` +
+    `GRADE     ${h > 0 ? (Math.abs(dz) / h * 100).toFixed(1) : '—'} %\n` +
+    `BEARING   ${((Math.atan2(dx, dy) * 180 / Math.PI + 360) % 360).toFixed(1)}°`;
+}
 
-  const MAX_VERTS = 800;
-  const stepX = Math.max(1, Math.ceil(width  / MAX_VERTS));
-  const stepY = Math.max(1, Math.ceil(height / MAX_VERTS));
-  const cols  = Math.ceil(width  / stepX);
-  const rows  = Math.ceil(height / stepY);
+function clearMeasure() {
+  measurePts = [];
+  measureObjs.forEach(disposeObj); measureObjs = [];
+  $('measure-result').classList.remove('visible');
+}
 
-  const colorAttr = mesh.geometry.attributes.color;
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const si = r * cols + c;
-      const srcR = Math.min(Math.round(r * stepY), height-1);
-      const srcC = Math.min(Math.round(c * stepX), width-1);
-      const raw = data[srcR * width + srcC];
-      const valid = !isNaN(raw) && (noData === null || Math.abs(raw - noData) > 0.001 * Math.abs(noData || 1));
-      const t = valid ? (raw - zMin) / zRange : 0;
-      const rgb = sampleCmap(cmap, t);
-      colorAttr.array[si*3]   = rgb[0];
-      colorAttr.array[si*3+1] = rgb[1];
-      colorAttr.array[si*3+2] = rgb[2];
+// ═════════════════════════════════════════════════════════════════════════════
+//  GRADE CHECK
+//  Cells on an absolute grid (aligned to round coordinates). Each cell's grade
+//  is the least-squares plane through every surface vertex inside the cell
+//  (∩ polygon), so single bumps don't dominate.
+// ═════════════════════════════════════════════════════════════════════════════
+const GRADE_BANDS = [
+  { max:  8,   hex: 0x00aa00, label: '0 – 8 %' },
+  { max: 10,   hex: 0x00dd00, label: '8 – 10 %' },
+  { max: 11,   hex: 0xffff00, label: '10 – 11 %' },
+  { max: 12,   hex: 0xffe200, label: '11 – 12 %' },
+  { max: 13,   hex: 0xff6600, label: '12 – 13 %' },
+  { max: 14,   hex: 0xff0000, label: '13 – 14 %' },
+  { max: Infinity, hex: 0x7f0000, label: '> 14 %' },
+];
+GRADE_BANDS.forEach(b => b.color = new THREE.Color(b.hex));
+const bandOf = pct => GRADE_BANDS.findIndex(b => pct <= b.max);
+
+const grade = {
+  drawing: false, drawPts: [], mouse: null,
+  poly: null,            // metric [[e,n],...] CCW
+  cells: [], faceToCell: [],
+  mesh: null, contours: null, arrows: null,
+  vis: { mesh: true, contours: true, arrows: false },
+};
+let eraseMode = false;
+
+function toggleGrade() {
+  if (!terrain) return;
+  if (grade.drawing) stopDrawing(); else startDrawing();
+}
+
+function startDrawing() {
+  if (measureMode) toggleMeasure();
+  if (eraseMode) toggleEraseMode();
+  if (paintMode) togglePaintMode();
+  grade.drawing = true; grade.drawPts = [];
+  const pc = $('poly-canvas');
+  pc.width = pc.clientWidth || pc.parentElement.clientWidth;
+  pc.height = pc.clientHeight || pc.parentElement.clientHeight;
+  pc.classList.add('visible');
+  $('three-canvas').classList.add('drawing');
+  $('grade-btn').classList.add('active');
+  $('hint').innerHTML = '<b>CLICK</b> to add points · <b>DOUBLE-CLICK / ENTER</b> to close · <b>BACKSPACE</b> undo · <b>ESC</b> cancel · <b>RIGHT-DRAG</b> pan · <b>SCROLL</b> zoom';
+  $('hint').classList.add('visible');
+}
+
+function stopDrawing() {
+  grade.drawing = false;
+  const pc = $('poly-canvas');
+  pc.classList.remove('visible');
+  pc.getContext('2d').clearRect(0, 0, pc.width, pc.height);
+  $('three-canvas').classList.remove('drawing');
+  $('grade-btn').classList.remove('active');
+  $('hint').classList.remove('visible');
+}
+
+function addPolyPoint(e) {
+  let p = pickMetric(e);
+  if (!p) {               // off the surface: use a plane at the last point's (or mid) height
+    const z = grade.drawPts.length ? grade.drawPts[grade.drawPts.length - 1][2] : terrain.cZ;
+    p = pickPlane(e, z);
+  }
+  if (!p) return;
+  const pts = grade.drawPts;
+  if (pts.length > 2) {   // click near the first point closes
+    const s0 = worldToScreen(pts[0]), r = $('three-canvas').getBoundingClientRect();
+    if (Math.hypot(e.clientX - r.left - s0[0], e.clientY - r.top - s0[1]) < 12) { closePolygon(); return; }
+  }
+  pts.push(p);
+}
+
+function worldToScreen(p) {
+  const v = terrain.toWorld(...p).project(camera), pc = $('poly-canvas');
+  return [(v.x + 1) / 2 * pc.width, (1 - v.y) / 2 * pc.height, v.z];
+}
+
+function drawPolyOverlay() {
+  const pc = $('poly-canvas'), ctx = pc.getContext('2d');
+  ctx.clearRect(0, 0, pc.width, pc.height);
+  const pts = grade.drawPts.map(worldToScreen);
+  if (!pts.length) return;
+  ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  if (grade.mouse) ctx.lineTo(grade.mouse[0], grade.mouse[1]);
+  ctx.strokeStyle = '#e87722'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 3]); ctx.stroke();
+  ctx.setLineDash([]);
+  for (const [x, y] of pts) { ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fillStyle = '#e87722'; ctx.fill(); }
+  if (pts.length > 2 && grade.mouse && Math.hypot(grade.mouse[0] - pts[0][0], grade.mouse[1] - pts[0][1]) < 12) {
+    ctx.beginPath(); ctx.arc(pts[0][0], pts[0][1], 10, 0, Math.PI * 2); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.stroke();
+  }
+}
+
+function closePolygon() {
+  // remove near-duplicate consecutive points (double-click adds two clicks first)
+  const pts = [];
+  for (const p of grade.drawPts) {
+    const q = pts[pts.length - 1];
+    if (!q || Math.hypot(p[0] - q[0], p[1] - q[1]) > 0.05) pts.push(p);
+  }
+  if (pts.length > 2 && Math.hypot(pts[0][0] - pts[pts.length - 1][0], pts[0][1] - pts[pts.length - 1][1]) < 0.05) pts.pop();
+  if (pts.length < 3) { showError('Need at least 3 points to make a polygon.'); return; }
+  stopDrawing();
+  let poly = pts.map(p => [p[0], p[1]]);
+  if (polyArea(poly) < 0) poly.reverse();          // CCW
+  grade.poly = poly;
+  runGradeCheck();
+}
+
+// ── 2D geometry helpers (metric) ──
+function polyArea(p) { let a = 0; for (let i = 0, j = p.length - 1; i < p.length; j = i++) a += p[j][0] * p[i][1] - p[i][0] * p[j][1]; return a / 2; }
+// Does segment A–B properly cross any edge of polygon p?
+function segCrossesPoly(A, B, p) {
+  const o = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  for (let i = 0, j = p.length - 1; i < p.length; j = i++) {
+    const C = p[j], D = p[i];
+    const d1 = o(C, D, A), d2 = o(C, D, B), d3 = o(A, B, C), d4 = o(A, B, D);
+    if (((d1 > 0) !== (d2 > 0)) && ((d3 > 0) !== (d4 > 0))) return true;
+  }
+  return false;
+}
+
+// Bowyer–Watson Delaunay triangulation of 2D points → [[i,j,k], ...]
+function delaunay2D(P) {
+  const n = P.length;
+  if (n < 3) return [];
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (const [x, y] of P) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+  const d = Math.max(x1 - x0, y1 - y0, 1) * 100, mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+  const V = P.concat([[mx - 2 * d, my - d], [mx, my + 2 * d], [mx + 2 * d, my - d]]);
+  const circ = (i, j, k) => {
+    const [ax, ay] = V[i], [bx, by] = V[j], [cx, cy] = V[k];
+    const D = 2 * (ax * (by - cy) + bx * (cy - ay) + cx * (ay - by));
+    if (Math.abs(D) < 1e-18) return null;
+    const ux = ((ax * ax + ay * ay) * (by - cy) + (bx * bx + by * by) * (cy - ay) + (cx * cx + cy * cy) * (ay - by)) / D;
+    const uy = ((ax * ax + ay * ay) * (cx - bx) + (bx * bx + by * by) * (ax - cx) + (cx * cx + cy * cy) * (bx - ax)) / D;
+    return [ux, uy, (ax - ux) ** 2 + (ay - uy) ** 2];
+  };
+  let T = [[n, n + 1, n + 2, circ(n, n + 1, n + 2)]];
+  for (let p = 0; p < n; p++) {
+    const [px, py] = V[p], keep = [], edges = new Map();
+    for (const t of T) {
+      const c = t[3];
+      if (c && (px - c[0]) ** 2 + (py - c[1]) ** 2 < c[2] * (1 - 1e-12)) {
+        for (const [a, b] of [[t[0], t[1]], [t[1], t[2]], [t[2], t[0]]]) {
+          const key = a < b ? a + ',' + b : b + ',' + a;
+          if (edges.has(key)) edges.delete(key); else edges.set(key, [a, b]);
+        }
+      } else keep.push(t);
+    }
+    for (const [a, b] of edges.values()) keep.push([a, b, p, circ(a, b, p)]);
+    T = keep;
+  }
+  return T.filter(t => t[0] < n && t[1] < n && t[2] < n).map(t => [t[0], t[1], t[2]]);
+}
+
+// Long-axis angle of a polygon: orientation of its minimum-area bounding rectangle
+function polyAxisAngle(p) {
+  let best = Infinity, ang = 0;
+  for (let i = 0; i < p.length; i++) {
+    const q = p[(i + 1) % p.length], a = Math.atan2(q[1] - p[i][1], q[0] - p[i][0]);
+    const c = Math.cos(a), s = Math.sin(a);
+    let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity;
+    for (const [x, y] of p) { const u = x * c + y * s, v = -x * s + y * c; u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
+    const area = (u1 - u0) * (v1 - v0);
+    if (area < best - 1e-9) { best = area; ang = (u1 - u0) >= (v1 - v0) ? a : a + Math.PI / 2; }
+  }
+  return ang;
+}
+function pointInPoly(x, y, p) {
+  let inside = false;
+  for (let i = 0, j = p.length - 1; i < p.length; j = i++) {
+    const xi = p[i][0], yi = p[i][1], xj = p[j][0], yj = p[j][1];
+    if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+// Clip a convex subject (the square) by an arbitrary polygon is not what S-H does, so we
+// clip the *polygon* by the convex square instead — correct for concave drawing polygons.
+function clipToRect(poly, x0, y0, x1, y1) {
+  let out = poly;
+  const edges = [[0, x0, 1], [0, x1, -1], [1, y0, 1], [1, y1, -1]];
+  for (const [ax, v, s] of edges) {
+    const inp = out; out = [];
+    if (!inp.length) break;
+    for (let k = 0; k < inp.length; k++) {
+      const cur = inp[k], prev = inp[(k + inp.length - 1) % inp.length];
+      const ci = (cur[ax] - v) * s >= 0, pi = (prev[ax] - v) * s >= 0;
+      if (ci !== pi) {
+        const t = (v - prev[ax]) / (cur[ax] - prev[ax]);
+        out.push([prev[0] + t * (cur[0] - prev[0]), prev[1] + t * (cur[1] - prev[1])]);
+      }
+      if (ci) out.push(cur);
     }
   }
-  colorAttr.needsUpdate = true;
+  return out;
 }
-
-// ─── Colorbar ─────────────────────────────────────────────────────────────────
-function drawColorbar(cmap, zMin, zMax) {
-  const canvas = document.getElementById('colorbar-gradient');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const grad = ctx.createLinearGradient(0, 160, 0, 0);
-  for (let i = 0; i <= 20; i++) {
-    const t = i / 20;
-    const [r,g,b] = sampleCmap(cmap, t);
-    grad.addColorStop(t, `rgb(${Math.round(r*255)},${Math.round(g*255)},${Math.round(b*255)})`);
+// Ear-clipping triangulation of a simple polygon (CCW). Returns index triples.
+function earClip(p0) {
+  // clean up clipper output first: drop duplicate and collinear vertices (they block ear detection)
+  let q = p0.filter((v, i) => { const w = p0[(i + 1) % p0.length]; return Math.hypot(v[0] - w[0], v[1] - w[1]) > 1e-7; });
+  for (let changed = true; changed && q.length > 3;) {
+    changed = false;
+    for (let i = 0; i < q.length && q.length > 3; i++) {
+      const a = q[(i + q.length - 1) % q.length], b = q[i], c = q[(i + 1) % q.length];
+      if (Math.abs((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])) < 1e-9) { q.splice(i, 1); changed = true; i--; }
+    }
   }
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 14, 160);
-  document.getElementById('cb-min').textContent = zMin.toFixed(1) + 'm';
-  document.getElementById('cb-max').textContent = zMax.toFixed(1) + 'm';
+  const map = q.map(v => p0.indexOf(v));
+  const p = q, n = p.length; if (n < 3) return [];
+  if (n === 3) return [map.slice()];
+  const idx = [...Array(n).keys()];
+  if (polyArea(p) < 0) idx.reverse();
+  const tris = [];
+  const cross = (a, b, c) => (p[b][0] - p[a][0]) * (p[c][1] - p[a][1]) - (p[b][1] - p[a][1]) * (p[c][0] - p[a][0]);
+  const inTri = (q, a, b, c) => cross(a, b, q) > 1e-12 && cross(b, c, q) > 1e-12 && cross(c, a, q) > 1e-12;
+  let guard = 0;
+  while (idx.length > 3 && guard++ < 5 * n) {
+    let cut = false;
+    for (let i = 0; i < idx.length; i++) {
+      const a = idx[(i + idx.length - 1) % idx.length], b = idx[i], c = idx[(i + 1) % idx.length];
+      if (cross(a, b, c) <= 1e-12) continue;
+      if (idx.some(q => q !== a && q !== b && q !== c && inTri(q, a, b, c))) continue;
+      tris.push([a, b, c]); idx.splice(i, 1); cut = true; break;
+    }
+    if (!cut) break;
+  }
+  if (idx.length === 3) tris.push(idx.slice());
+  return tris.map(tr => tr.map(k => map[k]));     // indices back into the caller's array
 }
 
-// ─── UI ───────────────────────────────────────────────────────────────────────
-function setLoading(show, text='PARSING DEM', pct=null) {
-  const el = document.getElementById('loading');
-  el.classList.toggle('active', show);
-  document.getElementById('loading-text').textContent = text;
-  if (pct !== null) document.getElementById('progress-fill').style.width = pct + '%';
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function runGradeCheck() {
+  const poly = grade.poly; if (!poly || !terrain) return;
+  $('grade-progress').classList.add('visible');
+  $('grade-progress-label').textContent = 'COMPUTING GRADE…';
+  await sleep(30);
+
+  const cs = +$('cell-size').value, t = terrain;
+  const method = $('grade-method').value;
+  let px0 = Infinity, px1 = -Infinity, py0 = Infinity, py1 = -Infinity;
+  for (const [x, y] of poly) { px0 = Math.min(px0, x); px1 = Math.max(px1, x); py0 = Math.min(py0, y); py1 = Math.max(py1, y); }
+  const gx0 = Math.floor(px0 / cs) * cs, gy0 = Math.floor(py0 / cs) * cs;
+  const cols = Math.ceil((px1 - gx0) / cs), rows = Math.ceil((py1 - gy0) / cs);
+  if (cols * rows > 400000) { $('grade-progress').classList.remove('visible'); showError('Polygon too large for this cell size — use a bigger cell.'); return; }
+
+  if (method === 'tri') {
+    // ── TRIANGLES (Vulcan-style) ─────────────────────────────────────────────
+    // Grid nodes every cs metres (aligned to round coordinates), heights read off the
+    // surface, each grid square split SW→NE into two triangles. Each triangle is graded
+    // by its own slope. Only triangles whose 3 nodes AND centroid are inside the polygon
+    // are kept, so nothing bridges across concave notches.
+    // Grid frame: north-aligned, or rotated to the polygon's long axis (minimum-area rectangle).
+    const th = $('grid-align').value === 'poly' ? polyAxisAngle(poly) : 0;
+    const co = Math.cos(th), si = Math.sin(th);
+    const toUV = ([x, y]) => [x * co + y * si, -x * si + y * co];
+    const toXY = (u, v) => [u * co - v * si, u * si + v * co];
+    let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity;
+    for (const p of poly) { const [u, v] = toUV(p); u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
+    const gu0 = Math.floor(u0 / cs) * cs, gv0 = Math.floor(v0 / cs) * cs;
+    const tc = Math.ceil((u1 - gu0) / cs), tr = Math.ceil((v1 - gv0) / cs);
+    const NC = tc + 1, NR = tr + 1, node = new Array(NC * NR);
+    for (let r = 0; r < NR; r++) for (let c = 0; c < NC; c++) {
+      const [e, n] = toXY(gu0 + c * cs, gv0 + r * cs);
+      // nodes must be inside the polygon (never on or beyond the line) and on the surface
+      node[r * NC + c] = [e, n, pointInPoly(e, n, poly) ? t.heightAt(e, n) : NaN];
+    }
+    // Triangulate all inside nodes together (Delaunay, like Vulcan) so the boundary steps get
+    // bridged by diagonal triangles instead of leaving a sawtooth. A tiny shear of the lattice
+    // makes every full grid square split SW→NE. Triangles are kept only if they lie wholly
+    // inside the polygon (no edge crosses the polygon line).
+    const lat = [], P3 = [];
+    for (let r = 0; r < NR; r++) for (let c = 0; c < NC; c++) {
+      const nd = node[r * NC + c];
+      if (!isFinite(nd[2])) continue;
+      lat.push([c - 1e-3 * r, r]); P3.push(nd);
+    }
+    // Edge fill: extra nodes every ~cs along the polygon, set `inset` metres inside the line,
+    // so the triangles reach close to the polygon without ever touching it.
+    const inset = +$('edge-fill').value;
+    if (inset > 0) {
+      const ccw = polyArea(poly) > 0 ? 1 : -1;
+      const nrm = i => { const p = poly[i], q = poly[(i + 1) % poly.length], L = Math.hypot(q[0] - p[0], q[1] - p[1]) || 1;
+                         return [-(q[1] - p[1]) / L * ccw, (q[0] - p[0]) / L * ccw]; };          // inward normal
+      const distToLine = (x, y) => { let m = Infinity;
+        for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+          const [ax, ay] = poly[j], [bx, by] = poly[i], dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy || 1;
+          const s = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / L2));
+          m = Math.min(m, Math.hypot(x - ax - s * dx, y - ay - s * dy));
+        } return m; };
+      const cand = [];
+      for (let i = 0; i < poly.length; i++) {
+        const p = poly[i], q = poly[(i + 1) % poly.length], n2 = nrm(i), n1 = nrm((i + poly.length - 1) % poly.length);
+        let bx = n1[0] + n2[0], by = n1[1] + n2[1]; const bl = Math.hypot(bx, by) || 1; bx /= bl; by /= bl;
+        const k = inset / Math.max(0.3, bx * n2[0] + by * n2[1]);
+        cand.push([p[0] + bx * k, p[1] + by * k]);                                            // corner
+        const L = Math.hypot(q[0] - p[0], q[1] - p[1]), m = Math.max(1, Math.round(L / cs));
+        for (let s = 1; s < m; s++) cand.push([p[0] + (q[0] - p[0]) * s / m + n2[0] * inset, p[1] + (q[1] - p[1]) * s / m + n2[1] * inset]);
+      }
+      const minGap = 0.2 * cs;
+      for (const [e, n] of cand) {
+        if (!pointInPoly(e, n, poly) || distToLine(e, n) < 0.5 * inset) continue;
+        if (P3.some(q => Math.hypot(q[0] - e, q[1] - n) < minGap)) continue;
+        const z = t.heightAt(e, n);
+        if (!isFinite(z)) continue;
+        const [u, v] = toUV([e, n]), c = (u - gu0) / cs, r = (v - gv0) / cs;
+        lat.push([c - 1e-3 * r, r]); P3.push([e, n, z]);
+      }
+    }
+    if (lat.length > 30000) { $('grade-progress').classList.remove('visible'); showError('Too many grid nodes — use a larger grid spacing.'); return; }
+    const tris = [];
+    for (const [i, j, k] of delaunay2D(lat)) {
+      const A = P3[i], B = P3[j], C = P3[k];
+      if (segCrossesPoly(A, B, poly) || segCrossesPoly(B, C, poly) || segCrossesPoly(C, A, poly)) continue;
+      const cx = (A[0] + B[0] + C[0]) / 3, cy = (A[1] + B[1] + C[1]) / 3;
+      if (!pointInPoly(cx, cy, poly)) continue;
+      const ux = B[0] - A[0], uy = B[1] - A[1], uz = B[2] - A[2], vx = C[0] - A[0], vy = C[1] - A[1], vz = C[2] - A[2];
+      const nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+      const area = Math.abs(nz) / 2;
+      const longest = Math.max(Math.hypot(ux, uy), Math.hypot(vx, vy), Math.hypot(B[0] - C[0], B[1] - C[1]));
+      if (2 * area / longest < 0.12 * cs) continue;           // drop near-collinear slivers (unstable slope)
+      const a = -nx / nz, b = -ny / nz;                       // dz/dE, dz/dN of the triangle plane
+      const g = Math.hypot(a, b) * 100;
+      const x0 = cx - cs / 2, y0 = cy - cs / 2;
+      tris.push({ x0, y0, cx, cy, piece: [[A[0], A[1]], [B[0], B[1]], [C[0], C[1]]], area,
+                  a, b, zc: A[2] - a * (A[0] - cx) - b * (A[1] - cy),
+                  grade: g, band: bandOf(g), dir: (Math.atan2(-a, -b) * 180 / Math.PI + 360) % 360,
+                  n: 3, rms: 0, ok: true, erased: false });
+    }
+    if (!tris.length) { $('grade-progress').classList.remove('visible'); showError('No grid triangles fit inside the polygon — draw a larger area or pick a smaller grid spacing.'); return; }
+    grade.cells = tris; grade.cs = cs; grade.method = 'tri';
+    $('grade-progress-label').textContent = 'BUILDING OVERLAY…';
+    await sleep(20);
+    renderGrade();
+    buildContours();
+    $('grade-progress').classList.remove('visible');
+    $('grade-legend').classList.add('visible');
+    $('grade-controls').classList.add('visible');
+    return;
+  }
+
+  // ── CELL PLANE FIT ───────────────────────────────────────────────────────────
+  // 1. cell footprints = drawing polygon ∩ cell square
+  const cellAt = new Int32Array(cols * rows).fill(-1);
+  const cells = [];
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const x0 = gx0 + c * cs, y0 = gy0 + r * cs;
+    const piece = clipToRect(poly, x0, y0, x0 + cs, y0 + cs);
+    if (piece.length < 3) continue;
+    const area = Math.abs(polyArea(piece));
+    if (area < 0.2 * cs * cs) continue;          // ignore slivers (too small to grade reliably)
+    cellAt[r * cols + c] = cells.length;
+    cells.push({ c, r, x0, y0, piece, area, sums: new Float64Array(9), n: 0, erased: false });
+  }
+  if (!cells.length) { $('grade-progress').classList.remove('visible'); showError('Polygon is smaller than one grade cell — draw a larger area or pick a smaller cell size.'); return; }
+
+  // 2. sample the TIN surface on a uniform 15×15 lattice inside each footprint.
+  //    Fitting to the surface (not to vertices) keeps results independent of how the
+  //    mesh was decimated — Vulcan surfaces often have only a few big triangles on flat benches.
+  const L = 15;
+  for (const cell of cells) {
+    for (let a = 0; a < L; a++) for (let b = 0; b < L; b++) {
+      const e = cell.x0 + (a + 0.5) * cs / L, n = cell.y0 + (b + 0.5) * cs / L;
+      if (!pointInPoly(e, n, poly)) continue;
+      const z = t.heightAt(e, n);
+      if (isFinite(z)) addSample(cell, e, n, z, cs);
+    }
+  }
+  // 3. solve planes (a cell needs surface under at least a quarter of its footprint)
+  for (const cell of cells) if (cell.n < 0.25 * L * L * cell.area / (cs * cs)) cell.n = 0;
+  for (const cell of cells) { solvePlane(cell, cs); cell.cx = cell.x0 + cs / 2; cell.cy = cell.y0 + cs / 2; }
+  grade.cells = cells.filter(c => c.ok);
+  grade.cs = cs; grade.method = 'plane';
+
+  $('grade-progress-label').textContent = 'BUILDING OVERLAY…';
+  await sleep(20);
+  renderGrade();
+  buildContours();
+  $('grade-progress').classList.remove('visible');
+  $('grade-legend').classList.add('visible');
+  $('grade-controls').classList.add('visible');
 }
+
+function addSample(cell, e, n, z, cs) {
+  const x = e - (cell.x0 + cs / 2), y = n - (cell.y0 + cs / 2), s = cell.sums;
+  s[0] += x * x; s[1] += x * y; s[2] += y * y; s[3] += x; s[4] += y; s[5] += x * z; s[6] += y * z; s[7] += z; s[8] += z * z;
+  cell.n++;
+}
+
+// z = a·x + b·y + c  (normal equations, Cramer's rule)
+function solvePlane(cell, cs) {
+  const [sxx, sxy, syy, sx, sy, sxz, syz, sz] = cell.sums, n = cell.n;
+  cell.ok = false;
+  if (n < 3) return;
+  const M = [[sxx, sxy, sx], [sxy, syy, sy], [sx, sy, n]], B = [sxz, syz, sz];
+  const det3 = m => m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+  const D = det3(M);
+  if (Math.abs(D) < 1e-9 * Math.max(1, sxx * syy * n)) return;
+  const col = (k) => M.map((row, i) => row.map((v, j) => j === k ? B[i] : v));
+  const a = det3(col(0)) / D, b = det3(col(1)) / D, c = det3(col(2)) / D;
+  cell.a = a; cell.b = b; cell.zc = c;
+  cell.grade = Math.hypot(a, b) * 100;
+  cell.band = bandOf(cell.grade);
+  cell.dir = (Math.atan2(-a, -b) * 180 / Math.PI + 360) % 360;   // downhill bearing
+  const res = cell.sums[8] - 2 * (a * sxz + b * syz + c * sz) + a * a * sxx + 2 * a * b * sxy + b * b * syy + 2 * a * c * sx + 2 * b * c * sy + c * c * n;
+  cell.rms = Math.sqrt(Math.max(0, res) / n);
+  cell.ok = true;
+}
+
+function renderGrade() {
+  grade.mesh = disposeObj(grade.mesh); grade.arrows = disposeObj(grade.arrows);
+  const t = terrain, cs = grade.cs, lift = 0.3;
+  const sub = Math.max(1, Math.round(cs / 2.5));     // drape: subdivide each cell ~2.5 m
+  const pos = [], col = [], faceToCell = [];
+  const apos = [], acol = [];
+  grade.cellFaces = new Map(); grade.cellArrow = new Map();
+  grade.cells.forEach((cell, ci) => {
+    if (cell.erased) return;
+    const color = GRADE_BANDS[shownBand(cell)].color;
+    const faceStart = faceToCell.length;
+    const zAt = (e, n) => {
+      const z = t.heightAt(e, n);
+      return (isFinite(z) ? z : cell.zc + cell.a * (e - cell.x0 - cs / 2) + cell.b * (n - cell.y0 - cs / 2)) + lift;
+    };
+    const ss = cs / sub;
+    if (grade.method === 'tri') {
+      // drape the grade triangle by splitting it into sub² smaller triangles (no clipping needed)
+      const [A, B, C] = cell.piece;
+      const P = (i, j) => [A[0] + (B[0] - A[0]) * i / sub + (C[0] - A[0]) * j / sub, A[1] + (B[1] - A[1]) * i / sub + (C[1] - A[1]) * j / sub];
+      const emit = (p, q, r) => {
+        for (const v of [p, q, r]) { const w = t.toWorld(v[0], v[1], zAt(v[0], v[1])); pos.push(w.x, w.y, w.z); col.push(color.r, color.g, color.b); }
+        faceToCell.push(ci);
+      };
+      for (let i = 0; i < sub; i++) for (let j = 0; j < sub - i; j++) {
+        emit(P(i, j), P(i + 1, j), P(i, j + 1));
+        if (i + j < sub - 1) emit(P(i + 1, j), P(i + 1, j + 1), P(i, j + 1));
+      }
+    } else
+    for (let i = 0; i < sub; i++) for (let j = 0; j < sub; j++) {
+      const piece = clipToRect(cell.piece, cell.x0 + i * ss, cell.y0 + j * ss, cell.x0 + (i + 1) * ss, cell.y0 + (j + 1) * ss);
+      if (piece.length < 3) continue;
+      for (const [a, b, c] of earClip(piece)) {
+        for (const q of [piece[a], piece[b], piece[c]]) {
+          const w = t.toWorld(q[0], q[1], zAt(q[0], q[1]));
+          pos.push(w.x, w.y, w.z); col.push(color.r, color.g, color.b);
+        }
+        faceToCell.push(ci);
+      }
+    }
+    grade.cellFaces.set(ci, [faceStart, faceToCell.length - faceStart]);
+    // downhill arrow at the footprint centroid
+    let cx = 0, cy = 0; for (const [x, y] of cell.piece) { cx += x; cy += y; }
+    cx /= cell.piece.length; cy /= cell.piece.length;
+    const g = Math.hypot(cell.a, cell.b); if (g < 1e-6) return;
+    const dx = -cell.a / g, dy = -cell.b / g, px = -dy, py = dx, half = cs * 0.2;
+    const pts = [[cx + dx * half, cy + dy * half], [cx - dx * half + px * half * 0.6, cy - dy * half + py * half * 0.6], [cx - dx * half - px * half * 0.6, cy - dy * half - py * half * 0.6]];
+    const W = pts.map(([x, y]) => t.toWorld(x, y, zAt(x, y) + 0.1));
+    grade.cellArrow.set(ci, apos.length / 3);
+    for (const [u, v] of [[0, 1], [1, 2], [2, 0]]) { apos.push(W[u].x, W[u].y, W[u].z, W[v].x, W[v].y, W[v].z); acol.push(color.r, color.g, color.b, color.r, color.g, color.b); }
+  });
+  grade.faceToCell = faceToCell;
+
+  if (pos.length) {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pos), 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(col), 3));
+    grade.mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+      vertexColors: true, side: THREE.DoubleSide, transparent: true, opacity: 0.82,
+      polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+    grade.mesh.visible = grade.vis.mesh;
+    scene.add(grade.mesh);
+  }
+  if (apos.length) {
+    const ageo = new THREE.BufferGeometry();
+    ageo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(apos), 3));
+    ageo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(acol), 3));
+    grade.arrows = new THREE.LineSegments(ageo, new THREE.LineBasicMaterial({ vertexColors: true }));
+    grade.arrows.visible = grade.vis.arrows;
+    scene.add(grade.arrows);
+  }
+  updateLegend();
+}
+
+// Contours from the real surface triangles inside the polygon, at absolute RLs
+function buildContours() {
+  grade.contours = disposeObj(grade.contours);
+  const t = terrain, poly = grade.poly, iv = +$('contour-int').value, lift = 0.5;
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (const [x, y] of poly) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+  const cx0 = Math.max(0, Math.floor((x0 - t.e0) / t.cs)), cx1 = Math.min(t.gx - 1, Math.floor((x1 - t.e0) / t.cs));
+  const cy0 = Math.max(0, Math.floor((y0 - t.n0) / t.cs)), cy1 = Math.min(t.gy - 1, Math.floor((y1 - t.n0) / t.cs));
+  const seen = new Set(), out = [];
+  const { E, N, Z, F } = t;
+  for (let gy = cy0; gy <= cy1; gy++) for (let gx = cx0; gx <= cx1; gx++) {
+    const c = gy * t.gx + gx;
+    for (let k = t.cellStart[c]; k < t.cellStart[c + 1]; k++) {
+      const tri = t.cellItems[k];
+      if (seen.has(tri)) continue; seen.add(tri);
+      const v = [F[tri * 3], F[tri * 3 + 1], F[tri * 3 + 2]];
+      const me = (E[v[0]] + E[v[1]] + E[v[2]]) / 3, mn = (N[v[0]] + N[v[1]] + N[v[2]]) / 3;
+      if (!pointInPoly(me, mn, poly)) continue;
+      const zs = v.map(i => Z[i]), zmin = Math.min(...zs), zmax = Math.max(...zs);
+      for (let iso = Math.ceil(zmin / iv) * iv; iso <= zmax; iso += iv) {
+        const hit = [];
+        for (let e = 0; e < 3; e++) {
+          const a = v[e], b = v[(e + 1) % 3];
+          if ((Z[a] < iso) !== (Z[b] < iso)) {
+            const s = (iso - Z[a]) / (Z[b] - Z[a]);
+            hit.push(t.toWorld(E[a] + s * (E[b] - E[a]), N[a] + s * (N[b] - N[a]), iso + lift));
+          }
+        }
+        if (hit.length === 2) out.push(hit[0].x, hit[0].y, hit[0].z, hit[1].x, hit[1].y, hit[1].z);
+      }
+    }
+  }
+  if (!out.length) return;
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(out), 3));
+  grade.contours = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.65 }));
+  grade.contours.visible = grade.vis.contours;
+  scene.add(grade.contours);
+}
+
+function updateLegend() {
+  const live = grade.cells.filter(c => !c.erased);
+  const tot = live.reduce((s, c) => s + c.area, 0) || 1;
+  const area = GRADE_BANDS.map(() => 0);
+  live.forEach(c => area[shownBand(c)] += c.area);
+  const painted = live.filter(c => c.paint !== undefined).length;
+  $('legend-rows').innerHTML = GRADE_BANDS.map((b, i) =>
+    `<div class="legend-row"><span class="legend-swatch" style="background:#${b.hex.toString(16).padStart(6, '0')}"></span>` +
+    `<span>${b.label}</span><span class="pct">${(100 * area[i] / tot).toFixed(0)}%</span></div>`).join('');
+  if (!live.length) { $('grade-summary').innerHTML = 'All cells erased.'; return; }
+  const mean = live.reduce((s, c) => s + c.grade * c.area, 0) / tot;
+  const worst = live.reduce((m, c) => c.grade > m.grade ? c : m, live[0]);
+  const over = live.filter(c => c.grade > 10).reduce((s, c) => s + c.area, 0);
+  $('grade-summary').innerHTML =
+    `<b>${live.length}</b> ${grade.method === 'tri' ? 'triangles' : 'cells'} · ${grade.cs} m · <b>${(tot / 1e4).toFixed(2)}</b> ha<br>` +
+    `Mean grade <b>${mean.toFixed(1)}%</b> · max <b>${worst.grade.toFixed(1)}%</b><br>` +
+    `Over 10%: <b>${(100 * over / tot).toFixed(0)}%</b> of area` +
+    (painted ? `<br>🖌 <b>${painted}</b> manually painted — legend % includes paint; mean / max are computed` : '');
+}
+
+// ── Manual paint: override the displayed band of individual triangles / cells ──
+let paintMode = false, paintDown = false, paintBand = 0;   // paintBand: band index, or -1 = back to auto
+
+const shownBand = c => (c.paint !== undefined ? c.paint : c.band);
+
+function buildPalette() {
+  const el = $('paint-palette');
+  el.innerHTML = GRADE_BANDS.map((b, i) =>
+    `<button class="swatch-btn${i === paintBand ? ' sel' : ''}" title="Paint ${b.label}" style="background:#${b.hex.toString(16).padStart(6, '0')}" onclick="setPaintBand(${i})"></button>`).join('') +
+    `<button class="swatch-btn auto${paintBand === -1 ? ' sel' : ''}" title="Restore computed colour" onclick="setPaintBand(-1)">AUTO</button>`;
+}
+function setPaintBand(i) { paintBand = i; buildPalette(); styleDot(); }
+
+// pointer dot: white for erase, filled with the selected colour for paint
+function styleDot() {
+  const d = $('erase-dot');
+  d.classList.toggle('paint', paintMode);
+  d.style.background = paintMode ? (paintBand === -1 ? '#ffffff' : '#' + GRADE_BANDS[paintBand].hex.toString(16).padStart(6, '0')) : '';
+  d.style.borderStyle = paintMode && paintBand === -1 ? 'dashed' : '';
+  if (!paintMode && !eraseMode) d.classList.remove('visible');
+}
+
+function togglePaintMode() {
+  paintMode = !paintMode;
+  if (paintMode) {
+    if (eraseMode) toggleEraseMode();
+    if (measureMode) toggleMeasure();
+    if (grade.drawing) stopDrawing();
+    buildPalette();
+  }
+  paintDown = false;
+  $('grade-paint-btn').classList.toggle('active', paintMode);
+  $('paint-palette').classList.toggle('visible', paintMode);
+  $('three-canvas').classList.toggle('painting', paintMode);
+  styleDot();
+}
+
+function paintAt(e) {
+  if (!grade.mesh) return;
+  const rc = new THREE.Raycaster();
+  rc.setFromCamera(ndc(e), camera);
+  const hits = rc.intersectObject(grade.mesh, false);
+  if (!hits.length) return;
+  const ci = grade.faceToCell[hits[0].faceIndex], cell = grade.cells[ci];
+  if (!cell) return;
+  const next = paintBand === -1 ? undefined : paintBand;
+  if (cell.paint === next) return;
+  if (next === undefined || next === cell.band) delete cell.paint; else cell.paint = next;
+  recolourCell(ci);
+  updateLegend();
+}
+
+// update one cell's colour in place (no rebuild — keeps drag-painting smooth)
+function recolourCell(ci) {
+  const col = GRADE_BANDS[shownBand(grade.cells[ci])].color;
+  const f = grade.cellFaces && grade.cellFaces.get(ci);
+  if (f && grade.mesh) {
+    const ca = grade.mesh.geometry.attributes.color;
+    for (let v = f[0] * 3; v < (f[0] + f[1]) * 3; v++) ca.setXYZ(v, col.r, col.g, col.b);
+    ca.needsUpdate = true;
+  }
+  const a = grade.cellArrow && grade.cellArrow.get(ci);
+  if (a !== undefined && grade.arrows) {
+    const ca = grade.arrows.geometry.attributes.color;
+    for (let v = a; v < a + 6; v++) ca.setXYZ(v, col.r, col.g, col.b);
+    ca.needsUpdate = true;
+  }
+}
+
+function toggleLayer(name) {
+  grade.vis[name] = !grade.vis[name];
+  const obj = grade[name];
+  if (obj) obj.visible = grade.vis[name];
+  $({ mesh: 'toggle-grade-mesh-btn', contours: 'toggle-contours-btn', arrows: 'toggle-arrows-btn' }[name]).classList.toggle('active', grade.vis[name]);
+}
+
+function toggleTerrainOpacity() {
+  if (!mesh) return;
+  const m = mesh.material, on = m.opacity > 0.5;
+  m.opacity = on ? 0.35 : 1; m.transparent = on; m.depthWrite = !on; m.needsUpdate = true;
+  $('toggle-opacity-btn').classList.toggle('active', on);
+}
+
+function toggleEraseMode() {
+  eraseMode = !eraseMode;
+  if (eraseMode && paintMode) togglePaintMode();
+  $('grade-erase-btn').classList.toggle('active', eraseMode);
+  $('three-canvas').classList.toggle('erasing', eraseMode);
+  styleDot();
+}
+
+function eraseCell(ci) {
+  if (ci === undefined || !grade.cells[ci]) return;
+  grade.cells[ci].erased = true;
+  renderGrade();
+}
+
+function onSettingsChange() { if (grade.poly) runGradeCheck(); }
+
+function clearGrade() {
+  if (eraseMode) toggleEraseMode();
+  if (paintMode) togglePaintMode();
+  if (grade.drawing) stopDrawing();
+  grade.mesh = disposeObj(grade.mesh); grade.contours = disposeObj(grade.contours); grade.arrows = disposeObj(grade.arrows);
+  grade.cells = []; grade.poly = null; grade.faceToCell = [];
+  $('grade-legend').classList.remove('visible');
+  $('grade-controls').classList.remove('visible');
+}
+
+function redrawGrade() { clearGrade(); startDrawing(); }
+
+function exportGradeCSV() {
+  const live = grade.cells.filter(c => !c.erased);
+  if (!live.length) return;
+  const rows = ['method,centre_e,centre_n,area_m2,samples,grade_pct,downhill_bearing_deg,plane_rms_m,band,computed_band,manually_painted'];
+  for (const c of live) {
+    rows.push([grade.method, c.cx.toFixed(2), c.cy.toFixed(2), c.area.toFixed(1), c.n,
+               c.grade.toFixed(2), c.dir.toFixed(1), c.rms.toFixed(3), `"${GRADE_BANDS[shownBand(c)].label}"`,
+               `"${GRADE_BANDS[c.band].label}"`, c.paint !== undefined ? 'yes' : 'no'].join(','));
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([rows.join('\n')], { type: 'text/csv' }));
+  a.download = (fileLabel.replace(/\.[^.]+$/, '') || 'grade') + `_grade_${grade.method}_${grade.cs}m.csv`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  UI / FILE HANDLING
+// ═════════════════════════════════════════════════════════════════════════════
+function setLoading(show, text, pct) {
+  $('loading').classList.toggle('active', show);
+  if (text) $('loading-text').textContent = text;
+  if (pct !== undefined) $('progress-fill').style.width = pct + '%';
+}
+const tick = () => new Promise(r => setTimeout(r, 0));
 
 function showError(msg) {
-  const el = document.getElementById('error-msg');
-  el.textContent = msg;
+  const el = $('error-msg');
+  el.textContent = '⚠ ' + msg;
   el.classList.add('visible');
-  setTimeout(() => el.classList.remove('visible'), 6000);
-}
-
-function setProgress(pct, text) {
-  document.getElementById('progress-fill').style.width = pct + '%';
-  if (text) document.getElementById('loading-text').textContent = text;
-}
-
-function showViewer(dem, stats) {
-  document.getElementById('dropzone').classList.add('hidden');
-  document.getElementById('canvas-container').classList.add('visible');
-  document.getElementById('bottom-bar').classList.add('visible');
-  document.getElementById('colorbar').classList.add('visible');
-  document.getElementById('north-btn').classList.add('visible');
-
-
-  // Show/hide colour mode toggle based on whether loaded data has baked colours
-  const hasPhoto = dem.type === 'mesh' && dem.hasVColor;
-}
-
-function setColourMode(mode) {
-  if (!demData || demData.type !== 'mesh') return;
-  colourMode = mode;
-
-  const { vz, vr, vg, vb, nVerts, hasVColor } = demData;
-  const colorAttr = mesh.geometry.attributes.color;
-
-  if (hasVColor && mode === 'photo') {
-    for (let i = 0; i < nVerts; i++) {
-      colorAttr.array[i*3]   = vr[i];
-      colorAttr.array[i*3+1] = vg[i];
-      colorAttr.array[i*3+2] = vb[i];
-    }
-  } else {
-    // Solid white hillshade
-    for (let i = 0; i < nVerts; i++) {
-      colorAttr.array[i*3]=1.0; colorAttr.array[i*3+1]=1.0; colorAttr.array[i*3+2]=1.0;
-    }
-  }
-  colorAttr.needsUpdate = true;
+  clearTimeout(showError.t);
+  showError.t = setTimeout(() => el.classList.remove('visible'), 7000);
 }
 
 function resetViewer() {
-  demData = null;
-  if (mesh)      { scene.remove(mesh);      mesh.geometry.dispose();      mesh.material.dispose(); }
-  if (wireframe) { scene.remove(wireframe); wireframe.geometry.dispose(); wireframe.material.dispose(); }
-  document.getElementById('dropzone').classList.remove('hidden');
-  document.getElementById('canvas-container').classList.remove('visible');
-  document.getElementById('bottom-bar').classList.remove('visible');
-  document.getElementById('colorbar').classList.remove('visible');
-  document.getElementById('north-btn').classList.remove('visible');
   clearGrade();
   clearMeasure();
-  measureMode = false;
-  document.getElementById('file-meta').textContent = 'No file loaded';
+  if (measureMode) toggleMeasure();
+  mesh = disposeObj(mesh);
+  terrain = null;
+  $('dropzone').classList.remove('hidden');
+  $('canvas-container').classList.remove('visible');
+  $('bottom-bar').classList.remove('visible');
+  $('north-btn').classList.remove('visible');
+  $('readout').classList.remove('visible');
+  $('file-meta').textContent = 'No file loaded';
   resetCamera();
 }
 
-// ─── File processing ──────────────────────────────────────────────────────────
 async function processFile(file) {
+  if (terrain) resetViewer();
   setLoading(true, 'READING FILE', 5);
-  document.getElementById('file-meta').textContent = file.name + ' · ' + (file.size/1024/1024).toFixed(1) + ' MB';
-
+  await tick();
   try {
     const ext = file.name.split('.').pop().toLowerCase();
-    let dem;
-
-    setProgress(15, 'PARSING FILE');
-
-    if (['tif','tiff'].includes(ext)) {
+    let model;
+    if (ext === '00t') {
       const buf = await file.arrayBuffer();
-      setProgress(40, 'DECODING GEOTIFF');
-      dem = parseTIFF(buf);
-    } else if (ext === 'asc') {
-      const txt = await file.text();
-      setProgress(40, 'PARSING GRID');
-      dem = parseASC(txt);
-    } else if (ext === 'png') {
-      const buf = await file.arrayBuffer();
-      setProgress(40, 'DECODING IMAGE');
-      dem = await parsePNG(buf);
-    } else if (['xyz','csv','txt'].includes(ext)) {
-      const txt = await file.text();
-      setProgress(40, 'GRIDDING POINTS');
-      dem = parseXYZ(txt);
+      setLoading(true, 'DECOMPRESSING VULCAN TRIANGULATION', 30); await tick();
+      model = parse00t(buf);
     } else if (ext === 'obj') {
-      setProgress(20, 'READING OBJ…');
       const txt = await file.text();
-      setProgress(50, 'PARSING MESH');
-      dem = parseOBJ(txt);
-    } else if (['bin','raw'].includes(ext)) {
-      const buf = await file.arrayBuffer();
-      setProgress(40, 'READING BINARY');
-      const data = new Float32Array(buf);
-      const side = Math.round(Math.sqrt(data.length));
-      const f64  = new Float64Array(data.length);
-      for (let i = 0; i < data.length; i++) f64[i] = data[i];
-      dem = { width: side, height: Math.ceil(data.length / side), data: f64, noData: null };
+      setLoading(true, 'PARSING OBJ', 30); await tick();
+      model = parseOBJ(txt);
+    } else if (ext === 'tif' || ext === 'tiff') {
+      model = parseTIFF(await file.arrayBuffer());
+    } else if (ext === 'asc') {
+      model = parseASC(await file.text());
+    } else if (['xyz', 'csv', 'txt'].includes(ext)) {
+      model = parseXYZ(await file.text());
     } else {
-      throw new Error(`Format ".${ext}" not recognised.`);
+      throw new Error(`".${ext}" files aren't supported — use .00t or .obj.`);
     }
 
-    setProgress(70, 'BUILDING MESH');
-    demData = dem;
+    setLoading(true, 'INDEXING SURFACE', 65); await tick();
+    terrain = new Terrain(model);
+    setLoading(true, 'UPLOADING TO GPU', 85); await tick();
+    buildTerrainMesh(terrain);
+    resetCamera();
 
-    let stats;
-    if (dem.type === 'mesh') {
-      colourMode = 'cmap'; // default to green hillshade for OBJ
-      stats = buildMeshOBJ(dem, exaggeration);
-      resetCamera(1.5);
-    } else {
-      stats = buildMesh(dem, currentCmap, exaggeration);
-      const worldH = (dem.realHeight || dem.height) / (dem.realWidth || dem.width);
-      resetCamera(worldH);
-    }
+    fileLabel = file.name;
+    const name = model.attrs && model.attrs.NAME ? model.attrs.NAME.split(/[\\/]/).pop() : '';
+    $('file-meta').innerHTML =
+      `${file.name} · ${(file.size / 1048576).toFixed(1)} MB · ${terrain.nV.toLocaleString()} pts · ${terrain.nF.toLocaleString()} tris<br>` +
+      `E ${terrain.e0.toFixed(0)}–${terrain.e1.toFixed(0)} · N ${terrain.n0.toFixed(0)}–${terrain.n1.toFixed(0)} · RL ${terrain.z0.toFixed(1)}–${terrain.z1.toFixed(1)}` +
+      (name && name !== file.name ? ` · Vulcan: ${name}` : '');
 
-    setProgress(90, 'UPLOADING TO GPU');
-    drawColorbar(currentCmap, stats.zMin, stats.zMax);
-
-    setTimeout(() => {
-      setLoading(false);
-      showViewer(dem, stats);
-    }, 200);
-
-  } catch(err) {
-    setLoading(false);
-    showError('⚠ ' + err.message);
+    setLoading(false, undefined, 100);
+    $('dropzone').classList.add('hidden');
+    $('canvas-container').classList.add('visible');
+    $('bottom-bar').classList.add('visible');
+    $('north-btn').classList.add('visible');
+  } catch (err) {
     console.error(err);
+    setLoading(false);
+    terrain = null;
+    showError(err.message);
   }
 }
 
-// ─── Event listeners ──────────────────────────────────────────────────────────
-const dropzone = document.getElementById('dropzone');
-const fileInput = document.getElementById('file-input');
-
+const dropzone = $('dropzone');
 dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
 dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
-dropzone.addEventListener('drop', e => {
+$('main').addEventListener('dragover', e => e.preventDefault());
+$('main').addEventListener('drop', e => {
   e.preventDefault();
   dropzone.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) processFile(file);
+  const f = e.dataTransfer.files[0];
+  if (f) processFile(f);
 });
-
-// Also allow drop on canvas after load
-document.getElementById('main').addEventListener('dragover', e => e.preventDefault());
-document.getElementById('main').addEventListener('drop', e => {
-  e.preventDefault();
-  const file = e.dataTransfer.files[0];
-  if (file) { resetViewer(); setTimeout(() => processFile(file), 100); }
-});
-
-fileInput.addEventListener('change', e => {
+$('file-input').addEventListener('change', e => {
   if (e.target.files[0]) processFile(e.target.files[0]);
+  e.target.value = '';
 });
 
-// Settings panel removed
-
-// ─── Init ─────────────────────────────────────────────────────────────────────
 initThree();
+resetCamera();
 </script>
 </body>
 </html>
